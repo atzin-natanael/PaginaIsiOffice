@@ -5,11 +5,12 @@ const generarCsrfToken = ()=> {
 const csrfMiddleware = (req, res, next) =>{
     if(!req.cookies.csrfToken){
         const csrfToken = generarCsrfToken()
-        res.cookie('csrfToken', csrfToken,{
+        res.cookie('csrfToken', csrfToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 3600000 // una hora
-        })
+            secure: true, // Forzar a true si ya usas https en el subdominio de pedidos
+            sameSite: 'Lax', // Cambia de strict a Lax para facilitar la comunicación entre subdominios
+            maxAge: 3600000 
+        });
         req.csrfToken = csrfToken
     }
     else{
@@ -47,12 +48,12 @@ const regenerateCsrfToken = (req, res, next)=>{
         return next()
     }
     const newCsrfToken = generarCsrfToken()
-    res.cookie('csrfToken', newCsrfToken,{
+    res.cookie('csrfToken', csrfToken, {
         httpOnly: true,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 3600000 // una hora
-    })
+        secure: true, // Forzar a true si ya usas https en el subdominio de pedidos
+        sameSite: 'Lax', // Cambia de strict a Lax para facilitar la comunicación entre subdominios
+        maxAge: 3600000 
+    });
     req.csrfToken = newCsrfToken
     res.locals.csrfToken = newCsrfToken
     next()
