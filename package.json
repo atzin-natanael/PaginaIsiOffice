@@ -1,7 +1,7 @@
 {
-  "name": "bienes-raices",
+  "name": "IsiOffice",
   "version": "1.0.0",
-  "description": "Mi primer Proyecto Node.js",
+  "description": "Proyecto Node.js",
   "main": "app.mjs",
   "type": "module",
   "scripts": {
