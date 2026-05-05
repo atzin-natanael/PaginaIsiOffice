@@ -4,14 +4,19 @@ import Articulos from './Articulo.js'
 import Usuario from './Usuario.js'
 import Clientes from './Clientes.js'
 import Cotizacion from './Cotizacion.js'
+<<<<<<< HEAD
 import ArticulosCotizacion from './ArticulosCotizacion.js'
 import DescuentosClientes from './DescuentosClientes.js'
 import Pedidos from './Pedidos.js'
 import ArticulosPedido from './ArticulosPedido.js'
+=======
+
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
 Articulos.belongsTo(Lineas, {foreignKey: 'LINEA_ID'})
 Articulos.belongsTo(Categoria, {foreignKey: 'CATEGORIA_ID'})
 Clientes.hasMany(Cotizacion, {foreignKey: 'CLIENTE_ID'})
 Cotizacion.belongsTo(Clientes, {foreignKey: 'CLIENTE_ID'})
+<<<<<<< HEAD
 ArticulosCotizacion.belongsTo(Cotizacion, {foreignKey: 'COTIZACION_ID'})
 ArticulosCotizacion.belongsTo(Articulos, {foreignKey: 'ART_ID'})
 Articulos.hasMany(ArticulosCotizacion, {foreignKey: 'ART_ID'})
@@ -25,6 +30,8 @@ Pedidos.belongsTo(Clientes, {foreignKey: 'CLIENTE_ID'})
 Articulos.hasMany(ArticulosPedido, {foreignKey: 'ART_ID'})
 ArticulosPedido.belongsTo(Pedidos, {foreignKey: 'PEDIDO_ID'})
 ArticulosPedido.belongsTo(Articulos, {foreignKey: 'ART_ID'})
+=======
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
 
 export{
     Articulos,
@@ -32,6 +39,10 @@ export{
     Categoria,
     Usuario,
     Clientes,
+<<<<<<< HEAD
     Cotizacion,
     DescuentosClientes
+=======
+    Cotizacion
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
 }

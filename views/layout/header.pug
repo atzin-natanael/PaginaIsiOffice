@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 header.bg-slate-300.border-b.border-stone-900.py-3.shadow-sm
     .container.mx-auto.flex.justify-between.items-center.px-4
         //- Lado Izquierdo: Logo y Bienvenida
@@ -35,3 +36,21 @@ header.bg-slate-300.border-b.border-stone-900.py-3.shadow-sm
             form(action="/auth/cerrar-sesion" method="POST" class="ml-2")
                 input(type="hidden" name="_csrf" value=csrfToken)
                 button(type="submit" class="bg-slate-800 hover:bg-red-700 text-white px-4 py-2 rounded-md text-xs font-bold uppercase tracking-tight transition-all shadow-sm") Salir
+=======
+header.bg-gray-300.p-4
+    .container.mx-auto.flex.justify-between.items-center
+        a(href="/catalogo") 
+            //- h1.text-2xl.text-white.font-extrabold.text-center Isi
+            //-     span.font-normal Office
+            img(src="/uploads/logo.png", alt="logo", class="h-16 inline-block ml-2")
+        nav(class="my-5 text-sm md:flex md:items-center md:gap-3 font-bold text-white hidden")
+            a(class=`${pagina === 'Catálogo' ? 'bg-red-600' : 'bg-slate-700'} py-2 px-6 rounded-lg transition-colors shadow-sm` href="/catalogo") Catálogo
+            //- Botones Secundarios (Gris oscuro/Azulado para no cansar la vista)
+            a(class=`${pagina === 'Crear Pedido' ? 'bg-red-600' : 'bg-slate-700'} py-2 px-6 rounded-lg transition-colors shadow-sm` href="/crearPedido") Crear Pedido
+            a(class=`${pagina === 'Mis Pedidos' ? 'bg-red-600' : 'bg-slate-700'} py-2 px-6 rounded-lg transition-colors shadow-sm` href="/pedidos") Mis Pedidos
+            a(class=`${pagina === 'Mi Perfil' ? 'bg-red-600' : 'bg-slate-700'} py-2 px-6 rounded-lg transition-colors shadow-sm` href="/auth/perfil") Mi Perfil
+            //- Botón de Salida (Un tono neutro o bordeado para diferenciarlo)
+            form(action="/auth/cerrar-sesion" method="POST")
+                input(type="hidden" name="_csrf" value=csrfToken)
+                input(type= "submit" class="bg-gray-500 hover:bg-gray-600 py-2 px-10 rounded-lg cursor-pointer" value= "Cerrar Sesión")
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403

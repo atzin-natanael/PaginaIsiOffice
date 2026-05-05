@@ -3,6 +3,7 @@ block contenido
     //pre= JSON.stringify(paginaActual, undefined, 2)
         //- h1.text-4xl.my-10.font-extrabold.text-center Isi 
         //-     span.font-normal Office
+<<<<<<< HEAD
     div(class="flex flex-wrap gap-4 justify-center")
         - const baseClass = "px-6 py-2 rounded text-md font-bold transition-all border"
         
@@ -25,6 +26,9 @@ block contenido
             span(class="mr-2") 📁
             | Oficina
     h2.text-center.text-2xl.font-extrabold.mt-5= pagina
+=======
+    h2.text-center.text-2xl.font-extrabold= pagina
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
     div(class="mx-auto max-w-4xl px-4")
         form(action="/catalogo" method="GET" class="flex flex-col md:flex-row gap-3 items-center justify-center p-4 rounded-xl shadow-lg")
             label(for="termino" class="text-sm uppercase font-bold whitespace-nowrap") Búsqueda
@@ -49,11 +53,15 @@ block contenido
                         th.py-3.px-4.text-left Clave
                         th.py-3.px-4.text-left Nombre
                         th.py-3.px-4.text-left Precio
+<<<<<<< HEAD
                         th.py-3.px-4.text-left Contenido de Caja
+=======
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
                         th.py-3.px-4.text-left Existencia
                 tbody
                     each codigo in codigos
                         tr.border-b.hover_bg-gray-100
+<<<<<<< HEAD
                             td.py-3.px-4.font-medium.text-gray-700= codigo.CLAVE_ARTICULO
                             td.py-3.px-4.text-sm.text-gray-600= codigo.NOMBRE
                             td.py-3.px-4.font-bold.text-blue-700= `$${codigo.precioNeto} MXN`
@@ -111,3 +119,92 @@ block contenido
                     class=`p-2 min-w-[40px] h-10 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-500 hover:bg-red-50 hover:border-red-500 hover:text-red-600 transition-colors ${paginaActual === paginas ? 'opacity-30 pointer-events-none' : ''}`)
                         svg(class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24")
                             path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7")
+=======
+                            td.py-3.px-4= codigo.CLAVE_ARTICULO
+                            td.py-3.px-4= codigo.NOMBRE
+                            td.py-3.px-4.font-bold= `$${codigo.PRECIO} MXN`
+                            td.py-3.px-4= codigo.TOTAL_EXISTENCIA
+                    else
+                        tr
+                            td.py-3.px-4.text-center(colspan="4") No hay productos disponibles
+            div(class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6")
+                    div(class= "flex-1 flex justify-between sm:hidden")
+                        a(href=`/catalogo?pagina=${paginaActual - 1}` class=`${paginaActual === 1 ? 'pointer-events-none bg-gray-100' : ''} relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50`) Anterior
+                        a(href=`/catalogo?pagina=${paginaActual + 1}` class=`${paginaActual === paginas ? 'pointer-events-none bg-gray-100' : ''} relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50`) Siguiente
+                    div(class= " hidden sm:flex1 sm:flex sm:items-center sm:justify-between")
+                        p(class="text-sm text-gray-700 gap-2") Mostrando 
+                            span(class="font-medium") #{offset + 1} a 
+                            span(class="font-medium") #{total < limit + offset ? total : limit+offset} de 
+                            span(class="font-medium") #{total} resultados
+                    //- div(class= "hidden sm:block")
+                    //-     nav(class= "relative z-0 inline-flex rounded-md shadow-md")
+                    //-         - var n = 1
+                    //-             while n<= paginas
+                    //-                 a(href=`/catalogo?pagina=${n}` class= `${paginaActual == n ? 'bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50 '}relative inline-flex items-center px-4 py-2 border text-sm font-medium`) #{n++} 
+                    div(class="hidden sm:block")
+                    div(class="pagination-buttons flex flex-wrap items-center gap-2")
+                        // << Primera
+                        a(
+                        href=paginaActual > 1
+                            ? (termino
+                                ? `/catalogo?pagina=1&termino=${termino}`
+                                : `/catalogo?pagina=1`)
+                            : '#'
+                        class=`page-btn p-2 rounded ${
+                            paginaActual === 1
+                            ? 'bg-gray-200 pointer-events-none opacity-50'
+                            : 'bg-gray-300 hover:bg-gray-400'
+                        }`
+                        ) <<
+                        // < Anterior
+                        a(
+                        href=paginaActual > 1
+                            ? (termino
+                                ? `/catalogo?pagina=${paginaActual - 1}&termino=${termino}`
+                                : `/catalogo?pagina=${paginaActual - 1}`)
+                            : '#'
+                        class=`page-btn p-2 rounded ${
+                            paginaActual === 1
+                            ? 'bg-gray-200 pointer-events-none opacity-50'
+                            : 'bg-gray-300 hover:bg-gray-400'
+                        }`
+                        ) <
+                        // ====== NÚMEROS (VENTANA DE 10) ======
+                        - const maxPaginas = 10
+                        - let inicio = Math.max(1, paginaActual - Math.floor(maxPaginas / 2))
+                        - let fin = inicio + maxPaginas - 1
+                        - if (fin > paginas) {
+                        -   fin = paginas
+                        -   inicio = Math.max(1, fin - maxPaginas + 1)
+                        - }
+                        - for (let i = inicio; i <= fin; i++)
+                            a(href=termino ? `/catalogo?pagina=${i}&termino=${termino}` : `/catalogo?pagina=${i}`)
+                                input(type="button" value=i class=`page-btn py-2 px-4 rounded cursor-pointer ${paginaActual === i ? 'bg-red-500 text-white font-bold' : 'bg-gray-300 hover:bg-gray-400'}`)
+                        // > Siguiente
+                        a(
+                        href=paginaActual !== paginas
+                            ? (termino
+                                ? `/catalogo?pagina=${paginaActual + 1}&termino=${termino}`
+                                : `/catalogo?pagina=${paginaActual + 1}`)
+                            : '#'
+                        class=`page-btn p-2 rounded ${
+                            paginaActual === paginas
+                            ? 'bg-gray-200 pointer-events-none opacity-50'
+                            : 'bg-gray-300 hover:bg-gray-400'
+                        }`
+                        ) >
+
+                        // >> Última
+                        a(
+                        href=paginaActual !== paginas
+                            ? (termino
+                                ? `/catalogo?pagina=${paginas}&termino=${termino}`
+                                : `/catalogo?pagina=${paginas}`)
+                            : '#'
+                        class=`page-btn p-2 rounded ${
+                            paginaActual === paginas
+                            ? 'bg-gray-200 pointer-events-none opacity-50'
+                            : 'bg-gray-300 hover:bg-gray-400'
+                        }`
+                        ) >>
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403

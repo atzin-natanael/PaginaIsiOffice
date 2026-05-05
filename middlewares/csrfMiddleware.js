@@ -18,6 +18,7 @@ const csrfMiddleware = (req, res, next) =>{
     res.locals.csrfToken = req.csrfToken
     next()
 }
+<<<<<<< HEAD
 const verifyCsrfToken = (req, res, next) => {
 
     if (!['POST','PUT','DELETE','PATCH'].includes(req.method)) {
@@ -42,6 +43,24 @@ const verifyCsrfToken = (req, res, next) => {
     next();
 };
 
+=======
+const verifyCsrfToken = (req, res, next)=>{
+    if(!['POST','PUT','DELETE', 'PATCH'].includes(req.method)){
+        return next()
+    }
+    const csrfTokenFromCookie = req.cookies.csrfToken
+    const csrfTokenFromBody = req.body._csrf
+    console.log(req.method)
+    console.log(req.body)
+    console.log('CSRF Body:', req.body?._csrf)
+    if(csrfTokenFromCookie !== csrfTokenFromBody){
+        const err = new Error('Error Desconocido, Intentar de nuevo')
+        err.status = 403
+        return next(err)
+    }
+    next()
+}
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
 const regenerateCsrfToken = (req, res, next)=>{
     if(!['POST','PUT','DELETE', 'PATCH'].includes(req.method)){
         return next()

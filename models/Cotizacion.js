@@ -19,6 +19,7 @@ const cotizacion = db.define('DOCTOS_COT', {
     DESCRIPCION: { 
     type: DataTypes.STRING(200),
     allowNull: false
+<<<<<<< HEAD
     },
     ESTATUS: {
         type: DataTypes.ENUM('PENDIENTE', 'CERRADA', 'VENCIDA', 'CANCELADA'),
@@ -27,6 +28,8 @@ const cotizacion = db.define('DOCTOS_COT', {
     FECHA_VENCIMIENTO:{
         type: DataTypes.DATE,
         allowNull: false
+=======
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
     }
 }, {
     timestamps: true

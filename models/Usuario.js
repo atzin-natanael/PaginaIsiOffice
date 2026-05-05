@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import db from '../config/db.js'
 
 const Usuario = db.define('USUARIOS',{
+<<<<<<< HEAD
     NOMBRE: {
         type: DataTypes.STRING,
         allowNull: false
@@ -13,6 +14,18 @@ const Usuario = db.define('USUARIOS',{
     },
     CLIENTE_ID: {
         type: DataTypes.INTEGER,
+=======
+    nombre: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    clave: {
+        type: DataTypes.STRING,
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
         allowNull: false
     },
     password: {

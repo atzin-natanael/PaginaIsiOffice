@@ -23,17 +23,26 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
+<<<<<<< HEAD
     "cors": "^2.8.6",
     "crypto-browserify": "^3.12.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
+=======
+    "crypto-browserify": "^3.12.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
     "express-validator": "^7.3.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.15.2",
     "nodemailer": "^7.0.9",
+<<<<<<< HEAD
     "pdf-lib": "^1.17.1",
+=======
+>>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
     "pug": "^3.0.3",
     "sequelize": "^6.37.7"
   },
