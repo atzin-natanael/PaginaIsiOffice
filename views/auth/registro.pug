@@ -15,7 +15,6 @@ block contenido
                     input(type="hidden" name="_csrf" value= csrfToken)
                     div
                         label.block.text-sm.uppercase.text-gray-600.mb-3.font-bold(for="nombre") Tu Nombre
-<<<<<<< HEAD
                         input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Nombre" type= "text" name= "nombre" value = usuario ? usuario.NOMBRE: '')
                     div
                         label.block.text-sm.uppercase.text-gray-600.mb-3.font-bold(for="email") Email
@@ -23,15 +22,6 @@ block contenido
                     div
                         label.block.text-sm.uppercase.text-gray-600.mb-3.font-bold(for="clave") Tu Clave de Cliente
                         input#clave.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Clave de Cliente" type= "text" name= "clave" value = usuario ? usuario.CLIENTE_ID: '')
-=======
-                        input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Nombre" type= "text" name= "nombre" value = usuario ? usuario.nombre: '')
-                    div
-                        label.block.text-sm.uppercase.text-gray-600.mb-3.font-bold(for="email") Email
-                        input#email.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Email" type="email" name="email" value = usuario ? usuario.email: '') 
-                    div
-                        label.block.text-sm.uppercase.text-gray-600.mb-3.font-bold(for="clave") Tu Clave de Cliente
-                        input#clave.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Clave de Cliente" type= "text" name= "clave" value = usuario ? usuario.clave: '')
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
                     div
                         label.block.text-sm.uppercase.text-gray-600.mb-3.font-bold(for="password") Contraseña
                         input#password.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Contraseña" type="password" name= "password")
