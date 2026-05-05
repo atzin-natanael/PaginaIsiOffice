@@ -2,11 +2,11 @@
   "name": "bienes-raices",
   "version": "1.0.0",
   "description": "Mi primer Proyecto Node.js",
-  "main": "index.js",
+  "main": "app.mjs",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "server": "nodemon index.js",
+    "start": "node app.mjs",
+    "server": "nodemon app.mjs",
     "css": "postcss public/css/tailwind.css -o public/css/app.css --watch",
     "dev": "npm run css",
     "db:importar": "node ./seed/seeder.js -i"
