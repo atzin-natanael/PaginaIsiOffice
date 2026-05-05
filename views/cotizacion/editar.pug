@@ -1,0 +1,193 @@
+extends ../layout/index
+
+block contenido 
+    h2.text-center.text-2xl.font-extrabold.my-6= pagina
+    //- BUSCADOR
+    div(class="mx-auto max-w-4xl px-4 mb-10")
+        form(action=`/cotizacion/editar/${id}` method="GET" class="flex flex-col md:flex-row gap-3 items-center justify-center p-4 rounded-xl shadow-lg bg-white")
+            label(for="termino" class="text-sm uppercase font-bold whitespace-nowrap") Búsqueda
+            input(
+                type="text" 
+                id="termino" 
+                name="termino" 
+                placeholder="Buscar Artículo..." 
+                class="flex-1 p-3 uppercase rounded-lg shadow-inner text-sm w-full focus:outline-none focus:ring-2 focus:ring-red-500 border border-gray-200"
+            )
+            input(
+                type="submit" 
+                class="w-full md:w-auto bg-gray-600 hover:bg-gray-700 transition-colors rounded-lg text-white uppercase font-bold px-6 py-3 cursor-pointer text-sm shadow-md" 
+                value="Buscar"
+            )
+    //pre=JSON.stringify(cotizacion, null, 2)
+    //- GRID PRINCIPAL
+    //pre=JSON.stringify(cotizacion, null,2)
+    div(class="w-full px-2") 
+        div(class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start")
+            
+            //- COLUMNA IZQUIERDA: Listado (7 de 12)
+            div(class="lg:col-span-7")
+                h3.text-xl.font-bold.mb-4 Listado de Productos
+                div.overflow-x-auto
+                    table.min-w-full.bg-white.shadow-md.rounded-lg
+                        thead.bg-gray-800.text-white
+                            tr
+                                th.p-3.text-left
+                                    a(href=`?sort=CLAVE_ARTICULO&order=${sort === 'CLAVE_ARTICULO' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Clave
+
+                                th.p-3.text-left
+                                    a(href=`?sort=NOMBRE&order=${sort === 'NOMBRE' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Nombre
+
+                                th.p-3.text-left
+                                    a(href=`?sort=TOTAL_EXISTENCIA&order=${sort === 'TOTAL_EXISTENCIA' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Existencia
+                                th.p-3.text-left
+                                    a(href=`?sort=precioNeto&order=${sort === 'precioNeto' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Precio
+
+                                th.p-3.text-center Acciones
+                        tbody
+                            each codigo in codigos
+                                tr.border-b.hover_bg-gray-50
+                                    // 1. Identificador
+                                    td.p-3.font-medium.text-gray-700= codigo.CLAVE_ARTICULO
+                                    
+                                    // 2. Descripción (ancho flexible)
+                                    td.p-3.text-sm.text-gray-600= codigo.NOMBRE
+                                    
+                                    // 3. Stock (Alineado al centro para que no se pierda)
+                                    td.p-3.text-center
+                                        span(class=codigo.TOTAL_EXISTENCIA > 0 ? 'text-green-600' : 'text-red-600')
+                                            | #{codigo.TOTAL_EXISTENCIA}
+                                    
+                                    // 4. Precio (Alineado a la derecha suele verse mejor con dinero)
+                                    td.p-3.font-bold.text-blue-700 $#{codigo.precioNeto}
+                                    
+                                    // 5. Acción
+                                    td.p-3.text-right
+                                        form(action=`/cotizacion/editar/${id}/agregar` method="POST" class="flex items-center justify-end gap-2")
+                                            input(type="hidden" name="_csrf" value=csrfToken)
+                                            input(type="hidden" name="cotizacionId" value=id)
+                                            input(type="hidden" name="articuloId" value=codigo.ART_ID)
+                                            input(
+                                                type="number"
+                                                name="CANTIDAD"
+                                                min="1"
+                                                max= codigo.TOTAL_EXISTENCIA
+                                                value="1"
+                                                onkeydown="return false"
+                                                class="w-16 border rounded text-center p-1 focus:ring-2 focus:ring-green-500 outline-none"
+                                            )
+                                            button(
+                                                type="submit"
+                                                class="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white p-2 rounded transition-transform active:scale-95 shadow-sm"
+                                                title="Agregar a la cotización"
+                                            )
+                                                img(src="/uploads/add.png" class="h-4 w-4 invert")
+                            else
+                                tr
+                                    td.py-10.text-center.text-gray-500(colspan="5") No hay productos disponibles
+                
+                //- Paginación
+                div(class="hidden md:block")
+                    p(class="text-sm text-center text-gray-600 my-3")
+                        | Mostrando 
+                        span(class="font-bold text-gray-900") #{offset + 1}
+                        |  a 
+                        span(class="font-bold text-gray-900") #{total < limit + offset ? total : limit + offset}
+                        |  de 
+                        span(class="font-bold text-gray-900") #{total}
+                        |  productos
+
+                //- pre= JSON.stringify({'paginaActual': paginaActual, 'paginas': paginas, 'offset': offset, 'total': total, 'limit': limit}, undefined, 2)
+                nav(class="flex flex-wrap justify-center space-x-1 mb-5" aria-label="Pagination")
+                    
+                    //- << IR AL INICIO
+                    a(href=`/cotizacion/editar?pagina=1${termino ? '&termino='+termino : ''}` 
+                    class=`p-2 min-w-[40px] h-10 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-500 hover:bg-red-50 hover:border-red-500 hover:text-red-600 transition-colors ${paginaActual === 1 ? 'opacity-30 pointer-events-none' : ''}`)
+                        svg(class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7")
+
+                    //- < ANTERIOR (Flecha individual)
+                    a(href=`/cotizacion/editar?pagina=${paginaActual - 1}${termino ? '&termino='+termino : ''}` 
+                    class=`p-2 min-w-[40px] h-10 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-500 hover:bg-red-50 hover:border-red-500 hover:text-red-600 transition-colors ${paginaActual === 1 ? 'opacity-30 pointer-events-none' : ''}`)
+                        svg(class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7")
+
+                    //- NÚMEROS (CUADRITOS)
+                    - const maxPaginas = 5 
+                    - let inicio = Math.max(1, paginaActual - 2)
+                    - let fin = Math.min(paginas, inicio + 4)
+                    - if (fin - inicio < 4) inicio = Math.max(1, fin - 4)
+
+                    - for (let i = inicio; i <= fin; i++)
+                        a(href=`/cotizacion/editar?pagina=${i}${termino ? '&termino='+termino : ''}` 
+                        class=`w-10 h-10 flex items-center justify-center rounded border text-sm font-bold transition-all ${paginaActual === i ? 'bg-red-600 border-red-600 text-white shadow-md scale-105' : 'bg-white border-gray-300 text-gray-700 hover:border-red-500 hover:text-red-600'}`) #{i}
+
+                    //- > SIGUIENTE (Flecha individual)
+                    a(href=`/cotizacion/editar?pagina=${paginaActual + 1}${termino ? '&termino='+termino : ''}` 
+                    class=`p-2 min-w-[40px] h-10 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-500 hover:bg-red-50 hover:border-red-500 hover:text-red-600 transition-colors ${paginaActual === paginas ? 'opacity-30 pointer-events-none' : ''}`)
+                        svg(class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7")
+
+                    //- >> IR AL FINAL
+                    a(href=`/cotizacion/editar?pagina=${paginas}${termino ? '&termino='+termino : ''}` 
+                    class=`p-2 min-w-[40px] h-10 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-500 hover:bg-red-50 hover:border-red-500 hover:text-red-600 transition-colors ${paginaActual === paginas ? 'opacity-30 pointer-events-none' : ''}`)
+                        svg(class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7")
+
+            //- COLUMNA DERECHA: ASIDE (5 de 12)
+            aside(class="lg:col-span-5")
+                div(class="bg-white p-4 rounded-lg shadow-xl border-t-4 border-red-600 w-full")
+                    h3.text-xl.font-bold.mb-4 Mi Cotización
+                    if cotizacion && cotizacion.length
+                        div.overflow-x-auto
+                            table(class="w-full text-[11px] table-auto")
+                                thead.text-gray-500.border-b.uppercase
+                                    tr
+                                        th.py-2.text-left Clave
+                                        th.py-2.text-left Nombre
+                                        th.py-2.text-right Stock
+                                        th.py-2.text-right Precio
+                                        th.py-2.text-center Cant.
+                                        th.py-2.text-right Total
+                                        th.py-2
+                                tbody
+                                    each item in cotizacion
+                                        tr.border-b.fila-articulo(
+                                            data-art-id=item.ART_ID 
+                                            data-clave=item.CLAVE_ARTICULO 
+                                            data-PRECIO=item.PRECIO)
+                                            td.py-3= item.CLAVE_ARTICULO
+                                            //- Truncar nombre si es muy largo
+                                            td.py-3.font-medium.leading-tight(class="max-w-[120px] truncate")= item.NOMBRE
+                                            td.py-3(class= item.EXISTENCIA < item.CANTIDAD ? "text-red-600 text-right" : "text-green-600 text-right")= item.EXISTENCIA
+                                            //- Precio Original (Tachado para que se note el descuento)
+                                            td.py-3.text-right.text-blue-600 $#{item.PRECIO_DESCUENTO}
+                                            
+                                            //- Porcentaje de descuento
+                                            //-td.py-3.text-right.text-blue-600 -#{item.porcentaje_descuento}%
+                                            
+                                            td.py-3.text-center
+                                                span.px-2.py-1.bg-gray-100.rounded.border= item.CANTIDAD
+                                                input.CANTIDAD(type="hidden" value=item.CANTIDAD)
+                                            //- Precio Final (El que paga)
+                                            td.py-3.text-right.font-bold.text-red-600 $#{item.IMPORTE_TOTAL}
+                                            
+                                            td.py-3.text-right
+                                                form(action="/cotizacion/eliminar-producto-edit" method="POST")
+                                                    input(type="hidden" name="_csrf" value=csrfToken)
+                                                    input(type="hidden" name="cotizacionId" value=id)
+                                                    input(type="hidden" name="articuloId" value=item.ART_ID)
+                                                    button(type="submit" class="text-red-500 hover:text-red-800 transition-colors")
+                                                        svg(xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                                                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12")
+                    
+                        div.mt-4.pt-4.border-t
+                            div.flex.justify-between.items-center
+                                span.text-gray-600 Total:
+                                span.text-xl.font-black.text-red-600 $#{totalCot}
+                            form(action="/cotizacion/guardar-edit" method="POST")
+                                input(type="hidden" name="_csrf" value=csrfToken)
+                                input(type="hidden" name="cotizacionId" value=id)
+                                button(type="submit" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md uppercase text-sm") Guardar Cotización
+                    else
+                        div.py-10.text-center
+                            p.text-gray-500 No hay productos agregados

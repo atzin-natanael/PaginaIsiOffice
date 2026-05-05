@@ -1,0 +1,55 @@
+extends ../layout/index
+
+block contenido
+    h2(class='text-3xl font-extrabold text-center my-10') Datos de Facturación
+    //- Estos pre son excelentes para debug, pero quítalos antes de producción
+    //- pre=JSON.stringify(COTIZACION_ID , null, 2)
+    
+    div(class="max-w-4xl mx-auto my-10")
+        //- EL FORM DEBE ENVOLVER TODO EL CONTENIDO DE LA TARJETA
+        form(action=`/pedido/crear/${COTIZACION_ID}` method="POST" class="bg-white shadow-lg rounded-xl p-6 md:p-10 border border-gray-100")
+            input(type="hidden" name="_csrf" value=csrfToken)
+            
+            div(class="grid grid-cols-1 md:grid-cols-2 gap-6")
+                //- Método de Pago
+                div
+                    label(for="metodoPago" class="block text-sm uppercase text-gray-500 mb-2 font-bold") Método de Pago
+                    select#metodoPago(name="metodoPago" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" required)
+                        option(value="") -- Seleccione --
+                        option(value="PUE") PUE - Pago en una sola exhibición
+                        option(value="PPD") PPD - Pago en parcialidades o diferido
+                
+                //- Forma de Pago
+                div
+                    label(for="formaPago" class="block text-sm uppercase text-gray-500 mb-2 font-bold") Forma de Pago
+                    select#formaPago(name="formaPago" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" required)
+                        option(value="") -- Seleccione --
+                        option(value="01") 01 - Efectivo
+                        option(value="03") 03 - Transferencia electrónica
+                        option(value="04") 04 - Tarjeta de crédito
+                        option(value="99") 99 - Por definir
+
+            //- Uso de CFDI (Fuera del grid de 2 columnas si quieres que ocupe todo el ancho)
+            div(class="mt-6")
+                label(for="usoCFDI" class="block text-sm uppercase text-gray-500 mb-2 font-bold") Uso de CFDI
+                select#usoCFDI(name="usoCFDI" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" required)
+                    option(value="") -- Seleccione --
+                    option(value="G01") G01 - Adquisición de mercancías
+                    option(value="G03") G03 - Gastos en general
+                    option(value="S01") S01 - Sin efectos fiscales
+                    option(value="CP01") CP01 - Pagos
+
+            //- Comentarios
+            div(class="mt-6")
+                label(for="comentarios" class="block text-sm uppercase text-gray-500 mb-2 font-bold") Comentarios / Observaciones
+                textarea#comentarios(name="comentarios" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition placeholder-gray-400" placeholder="Ej. Enviar copia al correo ventas@ejemplo.com...")
+
+            //- Botón de Acción
+            div(class="pt-8")
+                button(type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-lg shadow-md uppercase text-sm transition-all flex items-center justify-center gap-2" onclick="return confirm('¿Estás seguro de que deseas generar la factura?')")
+                    svg(xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor")
+                        path(fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd")
+                    | Confirmar y Facturar
+
+block scripts
+    script(src="/src/js/facturacion.js")

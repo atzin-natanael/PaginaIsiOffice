@@ -1,0 +1,113 @@
+extends ./layout/index
+block contenido 
+    //pre= JSON.stringify(paginaActual, undefined, 2)
+        //- h1.text-4xl.my-10.font-extrabold.text-center Isi 
+        //-     span.font-normal Office
+    div(class="flex flex-wrap gap-4 justify-center")
+        - const baseClass = "px-6 py-2 rounded text-md font-bold transition-all border"
+        
+        a(href="?categoria=" class=`${baseClass} ${categoriaActual === '1' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+            span(class="mr-2") ✏️
+            | Papelería
+        a(href="?categoria=2" class=`${baseClass} ${categoriaActual === '2' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+            span(class="mr-2") 🎁
+            | Regalos
+        a(href="?categoria=3" class=`${baseClass} ${categoriaActual === '3' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+            span(class="mr-2") 🎨
+            | Arte
+        a(href="?categoria=4" class=`${baseClass} ${categoriaActual === '4' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+            span(class="mr-2") 💻
+            | Tecnología
+        a(href="?categoria=5" class=`${baseClass} ${categoriaActual === '5' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+            span(class="mr-2") 🗓️
+            | Temporada
+        a(href="?categoria=6" class=`${baseClass} ${categoriaActual === '6' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+            span(class="mr-2") 📁
+            | Oficina
+    h2.text-center.text-2xl.font-extrabold.mt-5= pagina
+    div(class="mx-auto max-w-4xl px-4")
+        form(action="/catalogo" method="GET" class="flex flex-col md:flex-row gap-3 items-center justify-center p-4 rounded-xl shadow-lg")
+            label(for="termino" class="text-sm uppercase font-bold whitespace-nowrap") Búsqueda
+            
+            //- Agregamos flex-1 para que este input crezca y ocupe el espacio disponible
+            input(
+                type="text" 
+                id="termino" 
+                name="termino" 
+                placeholder="Buscar Artículo..." 
+                class="flex-1 p-3 uppercase rounded-lg shadow-inner text-sm w-full focus:outline-none focus:ring-2 focus:ring-red-500"
+            )
+            input(
+                type="submit" 
+                class="w-full md:w-auto bg-gray-600 hover:bg-gray-700 transition-colors rounded-lg text-white uppercase font-bold px-6 py-3 cursor-pointer text-sm shadow-md" 
+                value="Buscar"
+            )
+    .mt-10.mx-auto.max-w-6xl
+            table.min-w-full.bg-white.shadow-md.rounded-lg.overflow-hidden
+                thead.bg-gray-800.text-white
+                    tr
+                        th.py-3.px-4.text-left Clave
+                        th.py-3.px-4.text-left Nombre
+                        th.py-3.px-4.text-left Precio
+                        th.py-3.px-4.text-left Contenido de Caja
+                        th.py-3.px-4.text-left Existencia
+                tbody
+                    each codigo in codigos
+                        tr.border-b.hover_bg-gray-100
+                            td.py-3.px-4.font-medium.text-gray-700= codigo.CLAVE_ARTICULO
+                            td.py-3.px-4.text-sm.text-gray-600= codigo.NOMBRE
+                            td.py-3.px-4.font-bold.text-blue-700= `$${codigo.precioNeto} MXN`
+                            td.py-3.px-4.text-sm.text-gray-600= codigo.CONTENIDO_CAJA
+                            td.py-3.px-4(class=codigo.TOTAL_EXISTENCIA > 0 ? 'text-green-600' : 'text-red-600')= codigo.TOTAL_EXISTENCIA
+                                
+                    else
+                        tr
+                            td.py-3.px-4.text-center(colspan="5") No hay productos disponibles
+            div(class="bg-white px-4 py-5 flex items-center justify-between border-t border-gray-200 sm:px-6 shadow-sm")
+                //- Información de resultados (Izquierda)
+                div(class="hidden md:block")
+                    p(class="text-sm text-gray-600")
+                        | Mostrando 
+                        span(class="font-bold text-gray-900") #{offset + 1}
+                        |  a 
+                        span(class="font-bold text-gray-900") #{total < limit + offset ? total : limit + offset}
+                        |  de 
+                        span(class="font-bold text-gray-900") #{total}
+                        |  productos
+
+                //- pre= JSON.stringify({'paginaActual': paginaActual, 'paginas': paginas, 'offset': offset, 'total': total, 'limit': limit}, undefined, 2)
+                nav(class="flex items-center space-x-1" aria-label="Pagination")
+                    
+                    //- << IR AL INICIO
+                    a(href=`/catalogo?pagina=1${termino ? '&termino='+termino : ''}` 
+                    class=`p-2 min-w-[40px] h-10 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-500 hover:bg-red-50 hover:border-red-500 hover:text-red-600 transition-colors ${paginaActual === 1 ? 'opacity-30 pointer-events-none' : ''}`)
+                        svg(class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7")
+
+                    //- < ANTERIOR (Flecha individual)
+                    a(href=`/catalogo?pagina=${paginaActual - 1}${termino ? '&termino='+termino : ''}` 
+                    class=`p-2 min-w-[40px] h-10 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-500 hover:bg-red-50 hover:border-red-500 hover:text-red-600 transition-colors ${paginaActual === 1 ? 'opacity-30 pointer-events-none' : ''}`)
+                        svg(class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7")
+
+                    //- NÚMEROS (CUADRITOS)
+                    - const maxPaginas = 5 
+                    - let inicio = Math.max(1, paginaActual - 2)
+                    - let fin = Math.min(paginas, inicio + 4)
+                    - if (fin - inicio < 4) inicio = Math.max(1, fin - 4)
+
+                    - for (let i = inicio; i <= fin; i++)
+                        a(href=`/catalogo?pagina=${i}${termino ? '&termino='+termino : ''}` 
+                        class=`w-10 h-10 flex items-center justify-center rounded border text-sm font-bold transition-all ${paginaActual === i ? 'bg-red-600 border-red-600 text-white shadow-md scale-105' : 'bg-white border-gray-300 text-gray-700 hover:border-red-500 hover:text-red-600'}`) #{i}
+
+                    //- > SIGUIENTE (Flecha individual)
+                    a(href=`/catalogo?pagina=${paginaActual + 1}${termino ? '&termino='+termino : ''}` 
+                    class=`p-2 min-w-[40px] h-10 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-500 hover:bg-red-50 hover:border-red-500 hover:text-red-600 transition-colors ${paginaActual === paginas ? 'opacity-30 pointer-events-none' : ''}`)
+                        svg(class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7")
+
+                    //- >> IR AL FINAL
+                    a(href=`/catalogo?pagina=${paginas}${termino ? '&termino='+termino : ''}` 
+                    class=`p-2 min-w-[40px] h-10 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-500 hover:bg-red-50 hover:border-red-500 hover:text-red-600 transition-colors ${paginaActual === paginas ? 'opacity-30 pointer-events-none' : ''}`)
+                        svg(class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7")

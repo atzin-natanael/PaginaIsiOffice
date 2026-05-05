@@ -1,0 +1,37 @@
+header.bg-slate-300.border-b.border-stone-900.py-3.shadow-sm
+    .container.mx-auto.flex.justify-between.items-center.px-4
+        //- Lado Izquierdo: Logo y Bienvenida
+        //pre=JSON.stringify(usuario)   
+        .flex.items-center.gap-6
+            a(href="/catalogo" class="hover:opacity-80 transition-opacity") 
+                img(src="/uploads/logo.png", alt="Isi Office Logo", class="h-12 md:h-14 object-contain")
+            if usuario
+                .hidden(class="md:block border-l border-gray-300 h-10 ml-2")
+                div(class="hidden md:block")
+                    p.text-xs.text-gray-500.font-semibold.uppercase.tracking-wider Bienvenido
+                    p.text-sm.font-bold.text-slate-800= usuario.NOMBRE
+
+        //- Lado Derecho: Navegación
+        nav(class="hidden lg:flex items-center gap-2")
+            - const linkClass = "px-4 py-2 rounded-md text-sm font-bold transition-all duration-200 shadow-sm"
+        
+            if usuario
+                //- Agregamos 'border' a la condición de activo
+                a(class=`${linkClass} ${pagina === 'Catálogo' ? 'bg-red-600  text-white shadow-md border  ' : 'text-slate-600 hover:bg-slate-200 border border-transparent'}` href="/catalogo") Catálogo
+                
+                a(class=`${linkClass} ${pagina === 'Crear Cotización' ? 'bg-red-600 text-white shadow-md border ' : 'text-slate-600 hover:bg-slate-200 border border-transparent'}` href="/cotizacion/crear") Crear Cotización
+                
+                a(class=`${linkClass} ${pagina === 'Mis Cotizaciones' ? 'bg-red-600 text-white shadow-md border ' : 'text-slate-600 hover:bg-slate-200 border border-transparent'}` href=`/cotizacion/mostrar/${usuario.CLIENTE_ID}`) Mis Cotizaciones
+                
+                a(class=`${linkClass} ${pagina === 'Mis Pedidos' ? 'bg-red-600 text-white shadow-md border ' : 'text-slate-600 hover:bg-slate-200 border border-transparent'}` href=`/pedido/mostrar/${usuario.CLIENTE_ID}`) Mis Pedidos
+
+                //- Separador y Botones de cuenta
+            .h-6.w-px.bg-gray-300.mx-2
+            
+            a(href="/auth/perfil" class="p-2 text-slate-600 hover:text-red-600 transition-colors" title="Mi Perfil")
+                svg.w-6.h-6(fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                    path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z")
+
+            form(action="/auth/cerrar-sesion" method="POST" class="ml-2")
+                input(type="hidden" name="_csrf" value=csrfToken)
+                button(type="submit" class="bg-slate-800 hover:bg-red-700 text-white px-4 py-2 rounded-md text-xs font-bold uppercase tracking-tight transition-all shadow-sm") Salir

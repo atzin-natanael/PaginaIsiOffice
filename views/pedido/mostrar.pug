@@ -1,0 +1,58 @@
+extends ../layout/index
+
+block contenido
+    h2(class='text-3xl font-extrabold text-center mb-10')= pagina
+    div(class='max-w-6xl mx-auto mb-10')
+        if pedidos.length
+            div(class='bg-white shadow-xl rounded-lg overflow-hidden')
+                table(class='min-w-full divide-y divide-gray-200')
+                    thead.bg-gray-800.text-white
+                        tr
+                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') ID / Fecha
+                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Cliente
+                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Total
+                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Estatus
+                            th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Ver
+                            th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Enviar al correo
+                    tbody(class='bg-white divide-y divide-gray-200')
+                        each ped in pedidos
+                            tr(class='hover:bg-gray-50 transition-colors')
+                                //- 1. ID / Fecha
+                                td(class='px-6 py-4 whitespace-nowrap')
+                                    div(class='text-sm font-bold text-blue-600') ID ##{ped.PEDIDO_ID}
+                                    div(class='text-xs text-gray-500')= new Date(ped.createdAt).toLocaleDateString('es-MX')
+                                //- 2. Descripción
+                                td(class='px-6 py-4')
+                                    div(class='text-sm font-bold text-blue-600') Cliente: #{cliente.CLAVE_CLIENTE}
+                                    div(class='text-xs text-gray-400') #{cliente.NOMBRE}
+                                
+                                //- 3. Total
+                                td(class='px-6 py-4 whitespace-nowrap')
+                                    span(class='px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800')
+                                        | $#{ped.COSTO_TOTAL}
+
+                                //- 4. Estatus
+                                td(class='px-6 py-4 whitespace-nowrap')
+                                    if(ped.ESTATUS === 'PENDIENTE')
+                                        span(class='px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800') #{ped.ESTATUS}
+                                    else if(ped.ESTATUS === 'ENVIADO')
+                                        span(class='px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-blue-100 text-blue-800') #{ped.ESTATUS}
+                                    else if(ped.ESTATUS === 'VENCIDA')
+                                        span(class='px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-red-100 text-red-800') #{ped.ESTATUS}
+                                    else if(ped.ESTATUS === 'CANCELADA')
+                                        span(class='px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-gray-100 text-gray-800') #{ped.ESTATUS}
+                                
+                                td(class='px-6 py-4 whitespace-nowrap text-center')
+                                    a(href=`/pedizacion/ver/${ped.COTIZACION_ID}` title="ver" class=`inline-block ${ped.ESTATUS !== 'PENDIENTE' ? 'pointer-events-none cursor-not-allowed' : '' }`)
+                                        img(src="/uploads/ver.png" alt="Ver" class=`${ped.ESTATUS === 'PENDIENTE' ? 'w-6 h-6 hover:scale-110 transition-transform mx-auto' : 'w-6 h-6 opacity-50 cursor-not-allowed mx-auto pointer-events-none'}`)
+                                
+                                td(class='px-6 py-4 whitespace-nowrap text-center')
+                                    a(href=`/pedizacion/enviar/${ped.COTIZACION_ID}` title="Enviar" class=`inline-block ${ped.ESTATUS !== 'PENDIENTE' ? 'pointer-events-none cursor-not-allowed' : '' }`)
+                                        img(src="/uploads/mail.png" alt="Enviar" class=`${ped.ESTATUS === 'PENDIENTE' ? 'w-6 h-6 hover:scale-110 transition-transform mx-auto' : 'w-6 h-6 opacity-50 cursor-not-allowed mx-auto pointer-events-none'}`)
+                                
+        else
+            div(class='text-center bg-white shadow p-10 rounded-lg')
+                p(class='text-gray-600 text-xl') No hay pedidos registradas aún.
+    
+    div(class="max-w-6xl mx-auto flex justify-center sm:justify-start")
+        a(href="/catalogo" class="rounded-lg py-3 px-10 mb-10 bg-red-600 hover:bg-red-700 text-sm font-bold text-white text-center uppercase transition-all shadow-md") Volver al Catálogo

@@ -1,0 +1,8 @@
+extends ../layout/index
+block contenido 
+    div.py-10 
+        h1.text-4xl.my-10.font-extrabold.text-center Isi
+            span.font-normal Office
+        h2.text-center.text-2xl.font-extrabold= pagina
+        p.text-xl.font-bold.text-center.my-10= mensaje
+        a(href=`/cotizacion/mostrar/${usuario.CLIENTE_ID}?estatus=PENDIENTE` class="rounded py-2 px-10 bg-red-700  hover:bg-red-400 text-sm font-bold text-white text-center uppercase my-5 inline-block w-full sm:w-auto") Ir a mis cotizaciones

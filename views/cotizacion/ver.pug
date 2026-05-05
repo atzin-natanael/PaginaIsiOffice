@@ -1,0 +1,55 @@
+extends ../layout/index
+
+block contenido
+    div(class="max-w-6xl mx-auto my-10 px-4")
+        div(class="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100")
+            //- Encabezado con degradado profesional
+            div(class="bg-gradient-to-r from-slate-800 to-slate-900 p-6")
+                h3.text-xl.font-bold.text-white.flex.items-center.gap-2
+                    i.fas.fa-file-invoice(class="text-white") Cotización
+                    span=id
+            
+            div(class="p-0 sm:p-8")
+                if cotizacion && cotizacion.length
+                    div.overflow-x-auto
+                        table(class="w-full table-auto border-collapse")
+                            thead
+                                tr(class="border-b-2 border-gray-100 text-gray-400 uppercase text-[10px] tracking-widest font-bold")
+                                    th.py-4.px-4.text-left Clave
+                                    th.py-4.text-left Nombre
+                                    th.py-4.text-right Stock
+                                    th.py-4.text-right Precio
+                                    th.py-4.text-center Cant.
+                                    th.py-4.px-4.text-right Total
+                            tbody
+                                each item in cotizacion
+                                    tr.border-b.border-gray-50(class="hover:bg-gray-50/80 transition-colors")
+                                        td.py-4.px-4.text-gray-500.font-medium.text-xs= item.CLAVE_ARTICULO
+                                        
+                                        td.py-4
+                                            p.text-sm.font-bold.text-gray-800.leading-tight(class="max-w-[300px] md:max-w-md")= item.NOMBRE
+                                        
+                                        td.py-4.text-right
+                                            //- Mantenemos tu lógica de color para el stock
+                                            span(class= item.EXISTENCIA < item.CANTIDAD ? "text-red-600 font-bold text-sm" : "text-green-600 font-semibold text-sm")= item.EXISTENCIA
+                                        
+                                        td.py-4.text-right.text-blue-600.font-medium
+                                            span.text-xs $
+                                            span.text-sm= item.PRECIO_CON_DESCUENTO
+                                        
+                                        td.py-4.text-center
+                                            span(class="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded text-xs font-bold border")= item.CANTIDAD
+                                        
+                                        td.py-4.px-4.text-right.font-black.text-red-600.text-base
+                                            | $#{item.IMPORTE_TOTAL}
+
+                    //- Pie de tabla con el Total destacado
+                    div(class="mt-6 p-6 bg-gray-50 rounded-lg flex justify-between items-center")
+                        span.text-gray-500.font-bold.uppercase.tracking-tighter Total de la Cotización:
+                        div.flex.items-center.gap-2
+                            span.text-gray-400.text-xl.font-bold $
+                            span.bg-red-600.text-white.px-6.py-1.rounded-full.text-4xl.font-black= totalCot
+
+                else
+                    div.text-center.py-20
+                        p.text-gray-400.text-lg No hay artículos para mostrar.

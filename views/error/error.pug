@@ -1,0 +1,10 @@
+extends ../layout/index
+block contenido 
+    section.container.pt-5
+        .row
+            .text-center 
+                h1.border.p-3.shadow-sm
+                    p.mt-3.fs-4= message
+                    if error && error.stack
+                        pre #{error.stack}
+                    a.text-decoration-none.text-gray-500(href="/auth/login") Volver
