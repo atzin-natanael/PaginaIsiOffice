@@ -20,7 +20,7 @@ const transport = nodemailer.createTransport({
         html: `
             <p>Hola ${nombre}, Comprueba tu cuenta en IsiOffice.com</p>
             <p>Tu cuenta ya esta lista, solo debes confirmarlo en el siguiente enlace:
-            <a href= ${process.env.BACKEND_URL}:${process.env.PORT ?? 3000}/auth/confirmar/${token}>Confirmar Cuenta</a> </p>
+            <a href= ${process.env.BACKEND_URL}/auth/confirmar/${token}>Confirmar Cuenta</a> </p>
             <p>Si tu no creaste esta cuenta, puedes ignorar el mensaje</p>
         `
     })
@@ -44,7 +44,7 @@ const transport = nodemailer.createTransport({
         html: `
             <p>Hola ${nombre}, Has solicitado reestableber tu contraseña en BienesRaices.com</p>
             <p>Sigue el siguiente enlace para reestablecer la contraseña:
-            <a href= ${process.env.BACKEND_URL}:${process.env.PORT ?? 3000}/auth/olvide-password/${token}>Reestablecer Contraseña</a> </p>
+            <a href= ${process.env.BACKEND_URL}/auth/olvide-password/${token}>Reestablecer Contraseña</a> </p>
             <p>Si tu no solicitaste el cambio de contraseña, puedes ignorar el mensaje</p>
         `
     })
