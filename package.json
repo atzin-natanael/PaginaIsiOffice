@@ -46,10 +46,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atzin-natanael/Primer-Proyecto-Express.git"
+    "url": "git+https://github.com/atzin-natanael/PaginaIsiOffice.git"
   },
   "bugs": {
-    "url": "https://github.com/atzin-natanael/Primer-Proyecto-Express/issues"
+    "url": "https://github.com/atzin-natanael/PaginaIsiOffice/issues"
   },
-  "homepage": "https://github.com/atzin-natanael/Primer-Proyecto-Express#readme"
+  "homepage": "https://github.com/atzin-natanael/PaginaIsiOffice#readme"
 }
