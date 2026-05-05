@@ -1,11 +1,7 @@
 import express from 'express'
 import { formularioLogin, autenticar, formularioRegistro, registrar, confirmar, formularioOlvidePassword, resetPassword, comprobarToken, nuevoPassword, cerrarSesion, perfil} from '../controllers/usuarioController.js'
 import { verifyCsrfToken, regenerateCsrfToken } from '../middlewares/csrfMiddleware.js'
-<<<<<<< HEAD
 import {protegerRuta} from '../middlewares/protegerRuta.js';
-=======
-import protegerRuta from '../middlewares/protegerRuta.js';
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
 const router = express.Router()
 //Rounting
 router.get('/login', formularioLogin)

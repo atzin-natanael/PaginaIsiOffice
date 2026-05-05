@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Model, Op } from 'sequelize';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 import fs from 'fs/promises'; // Al inicio de tu archivo
@@ -12,15 +11,10 @@ const inicio = async (req, res) => {
     let { pagina = 1, termino = '', sort = 'CLAVE_ARTICULO', order = 'ASC', categoria = '' } = req.query;
     const {CLIENTE_ID} = req.usuario; // Asegúrate de que el cliente esté almacenado en la sesión
     const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: CLIENTE_ID } });
-=======
-const inicio = async (req, res) => {
-    let { pagina, termino = '' } = req.query;
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
     termino = termino.toUpperCase();
     if (!pagina) pagina = 1;
     const expresion = /^[1-9]\d*$/;
     if (!expresion.test(pagina)) {
-<<<<<<< HEAD
         return res.redirect(`/catalogo?pagina=1&termino=${termino}&categoria=${categoria}`);
     }
     try {
@@ -57,48 +51,16 @@ const inicio = async (req, res) => {
                 ahorro: (precioBase - precioConDescuento).toFixed(2)
             };
         });
-=======
-        return res.redirect(`/catalogo?pagina=1&termino=${termino}`);
-    }
-    try {
-        const respuesta = await fetch('http://localhost:3000/codigos/');
-        let datos = await respuesta.json();
-        // 🔎 FILTRO
-        if (termino.trim()) {
-            datos = datos.filter(c =>
-                (c.NOMBRE ?? '').toString().includes(termino) ||
-                (c.CLAVE_ARTICULO ?? '').toString().includes(termino)
-            );
-
-        }
-        const limit = 25;
-                const offset = (pagina - 1) * limit;
-
-                const primeros = datos.slice(offset, offset + limit);
-
-                const codigosConTotal = primeros.map(c => ({
-                    ...c,
-                    TOTAL_EXISTENCIA: Number(c.EXISTENCIA_A) + Number(c.EXISTENCIA_T)
-                }));
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
         res.render('catalogo', {
             pagina: 'Catálogo',
             barra: false,
             codigos: codigosConTotal,
-<<<<<<< HEAD
             paginas: datos.paginas,
             paginaActual: datos.pagina,
             total: datos.total,
             offset: datos.offset,
             limit: datos.limit,
             usuario: req.usuario,
-=======
-            paginas: Math.ceil(datos.length / limit),
-            paginaActual: Number(pagina),
-            total: datos.length,
-            offset,
-            limit,
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
             termino // 🔥 importante
         });
 
@@ -107,15 +69,11 @@ const inicio = async (req, res) => {
         res.render('catalogo', {
             pagina: 'Catálogo',
             barra: true,
-<<<<<<< HEAD
             usuario: req.usuario,
-=======
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
             codigos: []
         });
     }
 }
-<<<<<<< HEAD
 const crearCotizacion = async (req, res) => {
     let { pagina = 1, termino = '', sort = 'CLAVE_ARTICULO', order = 'ASC', categoria = '' } = req.query;
     const {CLIENTE_ID} = req.usuario; // Asegúrate de que el cliente esté almacenado en la sesión
@@ -1084,62 +1042,4 @@ export {
     pedidoCrear,
     mostrarPedidos
     //agregarEditandoArticuloACotizacion
-=======
-const crearPedido = async (req, res) => {
-    let { pagina, termino = '' } = req.query;
-    termino = termino.toUpperCase();
-    if (!pagina) pagina = 1;
-    const expresion = /^[1-9]\d*$/;
-    if (!expresion.test(pagina)) {
-        return res.redirect(`/crearPedido?pagina=1&termino=${termino}`);
-    }
-    try {
-        const respuesta = await fetch('http://localhost:3000/codigos/');
-        let datos = await respuesta.json();
-
-        // 🔎 FILTRO
-        if (termino.trim()) {
-            datos = datos.filter(c =>
-                (c.NOMBRE ?? '').toString().includes(termino) ||
-                (c.CLAVE_ARTICULO ?? '').toString().includes(termino)
-            );
-
-        }
-
-        const limit = 25;
-        const offset = (pagina - 1) * limit;
-
-        const primeros = datos.slice(offset, offset + limit);
-
-        const codigosConTotal = primeros.map(c => ({
-            ...c,
-            TOTAL_EXISTENCIA: Number(c.EXISTENCIA_A) + Number(c.EXISTENCIA_T)
-        }));
-
-        res.render('crearPedido', {
-            pagina: 'Crear Pedido',
-            barra: false,
-            codigos: codigosConTotal,
-            paginas: Math.ceil(datos.length / limit),
-            paginaActual: Number(pagina),
-            total: datos.length,
-            offset,
-            limit,
-            termino
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.render('crearPedido', {
-            pagina: 'Crear Pedido',
-            barra: true,
-            codigos: []
-        });
-    }
-};
-
-export {
-    inicio,
-    crearPedido,
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
 }

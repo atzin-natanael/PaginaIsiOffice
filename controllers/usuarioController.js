@@ -5,10 +5,7 @@ import Usuario from '../models/Usuario.js'
 import {generarId, generarJWT} from '../helpers/tokens.js'
 import {emailRegistro, emailOlvidePassword} from '../helpers/emails.js'
 import {regenerateCsrfToken} from '../middlewares/csrfMiddleware.js'
-<<<<<<< HEAD
 import Clientes from '../models/Clientes.js'
-=======
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
 
 const formularioLogin = (req, res)=>{
     res.render('auth/login',{
@@ -25,10 +22,7 @@ const autenticar = async (req, res) =>{
        //errores
         return res.render('auth/login',{
             pagina: 'Iniciar Sesión',
-<<<<<<< HEAD
             barra: true,
-=======
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
             errores: resultado.array()
         })
     }
@@ -38,10 +32,7 @@ const autenticar = async (req, res) =>{
     if(!usuario){
          return res.render('auth/login',{
             pagina: 'Iniciar Sesión',
-<<<<<<< HEAD
             barra: true,
-=======
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
             errores: [{msg: 'El Usuario no Existe'}]
         })
     }
@@ -49,10 +40,7 @@ const autenticar = async (req, res) =>{
     if(!usuario.confirmado){
          return res.render('auth/login',{
             pagina: 'Iniciar Sesión',
-<<<<<<< HEAD
             barra: true,
-=======
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
             errores: [{msg: 'El Usuario no está confirmado'}]
         })
     }
@@ -60,19 +48,12 @@ const autenticar = async (req, res) =>{
     if(!usuario.verificarPassword(password)){
         return res.render('auth/login',{
             pagina: 'Iniciar Sesión',
-<<<<<<< HEAD
             barra: true,
-=======
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
             errores: [{msg: 'La contraseña es incorrecta'}]
         })
     }
     //autenticar el usuario
-<<<<<<< HEAD
     const token =generarJWT({id: usuario.id, nombre: usuario.NOMBRE})
-=======
-    const token =generarJWT({id: usuario.id, nombre: usuario.nombre})
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
     //almacenar en cookie
     return res.cookie('_token', token, {
         httpOnly: true
@@ -83,12 +64,8 @@ const autenticar = async (req, res) =>{
 }
 const formularioRegistro = (req, res)=>{
     res.render('auth/registro',{
-<<<<<<< HEAD
         pagina: 'Crear Cuenta',
         barra: true
-=======
-        pagina: 'Crear Cuenta'
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
     })
 }
 const registrar = async(req, res)=>{
@@ -107,15 +84,9 @@ const registrar = async(req, res)=>{
             pagina: 'Crear Cuenta',
             errores: resultado.array(),
             usuario: {
-<<<<<<< HEAD
                 NOMBRE: req.body.nombre,
                 EMAIL: req.body.email,
                 CLIENTE_ID: req.body.clave
-=======
-                nombre: req.body.nombre,
-                email: req.body.email,
-                clave: req.body.clave
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
             }
         })
     }
@@ -127,42 +98,24 @@ const registrar = async(req, res)=>{
             pagina: 'Crear Cuenta',
             errores: [{msg: 'El Usuario ya está registrado'}],
             usuario: {
-<<<<<<< HEAD
                 NOMBRE: req.body.nombre,
                 EMAIL: req.body.email,
                 CLIENTE_ID: req.body.clave
-=======
-                nombre: req.body.nombre,
-                email: req.body.email,
-                clave: req.body.clave
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
             }
         })
     }
     //Almacenar usuario
     const usuario = await Usuario.create({
-<<<<<<< HEAD
         NOMBRE: nombre,
         EMAIL: email,
         password,
         CLIENTE_ID: clave,
-=======
-        nombre,
-        email,
-        password,
-        clave,
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
         token: generarId()
     })
     //Envia email de confirmacion
     emailRegistro({
-<<<<<<< HEAD
         nombre: usuario.NOMBRE,
         email: usuario.EMAIL,
-=======
-        nombre: usuario.nombre,
-        email: usuario.email,
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
         token: usuario.token
     })
     //Mostrando al cliente la confirmacion
@@ -224,13 +177,8 @@ const resetPassword = async(req,res) =>{
     await usuario.save()
     //enviar email
     emailOlvidePassword({
-<<<<<<< HEAD
         email: usuario.EMAIL,
         nombre: usuario.NOMBRE,
-=======
-        email: usuario.email,
-        nombre: usuario.nombre,
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
         token: usuario.token
     })
     //renderizar un mensaje
@@ -287,7 +235,6 @@ const nuevoPassword = async(req, res)=>{
 const cerrarSesion= (req,res)=>{
     return res.clearCookie('_token').status(200).redirect('/auth/login')
 }
-<<<<<<< HEAD
 const perfil = async (req, res) => {
     const cliente = await Clientes.findOne({
         where: {CLIENTE_ID: req.usuario.CLIENTE_ID}
@@ -296,12 +243,6 @@ const perfil = async (req, res) => {
         pagina: 'Mi Perfil',
         usuario: req.usuario,
         cliente
-=======
-const perfil = (req, res) => {
-    res.render('auth/perfil', {
-        pagina: 'Mi Perfil',
-        usuario: req.usuario
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
     })
 }
 

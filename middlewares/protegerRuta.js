@@ -12,15 +12,10 @@ const protegerRuta =async(req, res, next)=>{
         const decoded = jwt.verify(_token, process.env.JWT_SECRET)
         const usuario = await Usuario.scope('eliminarPassword').findByPk(decoded.id)
         //almacenar usuario al request
-<<<<<<< HEAD
         console.log('Usuario encontrado en protegerRuta:', usuario);
         if(usuario){
             req.usuario = usuario
             res.locals.usuario = usuario
-=======
-        if(usuario){
-            req.usuario = usuario
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
         }else{
             return res.redirect('/auth/login')
         }
@@ -31,7 +26,6 @@ const protegerRuta =async(req, res, next)=>{
         // ❌ NO borres la cookie aquí todavía
     }
 }
-<<<<<<< HEAD
 const protegerRutaCliente =async(req, res, next)=>{
     //Verificar si hay token
     const {_token} = req.cookies
@@ -64,6 +58,3 @@ const protegerRutaCliente =async(req, res, next)=>{
     }
 }
 export {protegerRuta, protegerRutaCliente}
-=======
-export default protegerRuta
->>>>>>> 93ef10cc365af59ee32899aa1355eac7c384d403
