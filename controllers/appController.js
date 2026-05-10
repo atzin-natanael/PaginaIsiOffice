@@ -834,7 +834,7 @@ const enviarPdf = async(req, res)=>{
         });
 
         // 2. En lugar de usar datosCot[0].COSTO_TOTAL, usa nuestra suma
-        const totalFinalTexto = sumaTotalCalculada.toFixed(2);
+        const total = sumaTotalCalculada.toFixed(2);
 
         // 1. ESPACIO DESPUÉS DEL ÚLTIMO ARTÍCULO
         yPosition -= 20; 
