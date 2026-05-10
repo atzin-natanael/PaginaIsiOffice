@@ -810,26 +810,27 @@ const enviarPdf = async(req, res)=>{
         const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
         const partidasDB = await respDetalle.json();
 
+        // 1. Creamos una variable para acumular el total real de las partidas
+        let sumaTotalCalculada = 0;
+
         partidasDB.forEach(item => {
-            // Si el texto es muy largo, lo cortamos (opcional)
             const nombreCorto = item.NOMBRE.substring(0, 60);
+            
+            // Convertimos a número para asegurar que la suma sea correcta
+            const importeItem = Number(item.IMPORTE_TOTAL) || 0;
+            sumaTotalCalculada += importeItem;
 
             page.drawText(`${item.CANTIDAD}`, { x: 50, y: yPosition, size: 9, font: fontRegular });
             page.drawText(nombreCorto, { x: 100, y: yPosition, size: 9, font: fontRegular });
-            page.drawText(`$${item.IMPORTE_TOTAL}`, { x: 500, y: yPosition, size: 9, font: fontRegular });
             
-            yPosition -= 15; // Bajamos para la siguiente fila
-
-            // Control de salto de página simple (si te quedas sin espacio abajo)
-            if (yPosition < 50) {
-                // Aquí podrías agregar otra página, pero para pocas partidas está bien así
-            }
+            // Mostramos el importe de la partida con 2 decimales
+            page.drawText(`$${importeItem.toFixed(2)}`, { x: 500, y: yPosition, size: 9, font: fontRegular });
+            
+            yPosition -= 15;
         });
 
-        const respuesta = await fetch(`${process.env.API_URL}/cotizaciones/edit/${id}`);
-        const datosCot = await respuesta.json();
-        
-        const total = datosCot[0].COSTO_TOTAL;
+        // 2. En lugar de usar datosCot[0].COSTO_TOTAL, usa nuestra suma
+        const total = sumaTotalCalculada.toFixed(2);
 
         // 1. ESPACIO DESPUÉS DEL ÚLTIMO ARTÍCULO
         yPosition -= 20; 
