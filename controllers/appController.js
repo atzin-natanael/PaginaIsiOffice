@@ -18,7 +18,8 @@ const inicio = async (req, res) => {
         return res.redirect(`/catalogo?pagina=1&termino=${termino}&categoria=${categoria}`);
     }
     try {
-        const respuesta = await fetch(`https://apirest.papeleriacornejo.com/codigos?pagina=${pagina}&categoria=${categoria}&termino=${termino}&sort=${sort}&order=${order}`);
+        console.log('API URL:',     process.env.API_URL);
+        const respuesta = await fetch(`${process.env.API_URL}/codigos?pagina=${pagina}&categoria=${categoria}&termino=${termino}&sort=${sort}&order=${order}`);
         let datos = await respuesta.json();
         const arreglo = datos.datos;
         // 🔎 FILTRO
@@ -85,7 +86,7 @@ const crearCotizacion = async (req, res) => {
     
     const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: CLIENTE_ID } });
     try {
-        const respuesta = await fetch(`https://apirest.papeleriacornejo.com/codigos?pagina=${pagina}&categoria=${categoria}&termino=${termino}&sort=${sort}&order=${order}`);
+        const respuesta = await fetch(`${process.env.API_URL}/codigos?pagina=${pagina}&categoria=${categoria}&termino=${termino}&sort=${sort}&order=${order}`);
         let datos = await respuesta.json();
         const arreglo = datos.datos;
         // --- INICIO DE SINCRONIZACIÓN DEL CARRITO ---
@@ -207,14 +208,14 @@ const agregarArticuloACotizacion = async (req, res) => {
     console.log('**********************Agregar ART_ID:', req.body, 'Cantidad:', CANTIDAD, 'Término:', termino);
     const clienteId = req.usuario.CLIENTE_ID; // Asegúrate de que el cliente esté almacenado en la sesión
     const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: clienteId } });    
-    const articuloAct = await fetch(`https://apirest.papeleriacornejo.com/codigos/${articuloId}`).then(res => res.json()).then(data => data[0]);
+    const articuloAct = await fetch(`${process.env.API_URL}/codigos/${articuloId}`).then(res => res.json()).then(data => data[0]);
     console.log("Artículo actual:", articuloAct);
     console.log("Descuento encontrado:", descuento.DESCUENTO);
     if (!req.session.cotizacionNueva) {
         req.session.cotizacionNueva = [];
     }
 
-    const respuesta = await fetch(`https://apirest.papeleriacornejo.com/codigos/${articuloId}`);
+    const respuesta = await fetch(`${process.env.API_URL}/codigos/${articuloId}`);
     const resultado = await respuesta.json(); // Esto es el [ { ... } ]
 
     // 1. Extraemos el primer elemento del arreglo
@@ -269,7 +270,7 @@ const agregarArticuloACotizacion = async (req, res) => {
 //         const porcentajeDesc = descuentoDoc ? (Number(descuentoDoc.DESCUENTO) / 100) : 0;
 
 //         // 3. Obtener datos del artículo
-//         const respuesta = await fetch(`https://apirest.papeleriacornejo.com/codigos/${articuloId}`);
+//         const respuesta = await fetch(`${process.env.API_URL}/codigos/${articuloId}`);
 //         const resultado = await respuesta.json();
 //         const articulo = resultado[0];
 
@@ -322,7 +323,7 @@ const editarArticuloCotizacion = async (req, res) => {
     }
 
     try {
-        const respuesta = await fetch(`https://apirest.papeleriacornejo.com/codigos/${articuloId}`);
+        const respuesta = await fetch(`${process.env.API_URL}/codigos/${articuloId}`);
         const resultado = await respuesta.json();
         const articulo = resultado[0]; 
 
@@ -369,7 +370,7 @@ const mostrarCotizaciones = async (req, res) => {
     const estatus = req.query.estatus || 'PENDIENTE'; // Valor por defecto
     const usuario = req.usuario;
     console.log('mostrar cotizaciones de cliente:', usuario);
-    const respuesta = await fetch(`https://apirest.papeleriacornejo.com/cotizaciones/${id}?estatus=${estatus}`);
+    const respuesta = await fetch(`${process.env.API_URL}/cotizaciones/${id}?estatus=${estatus}`);
     const cotizaciones = await respuesta.json(); // Esto es el [ { ... } ]
     const cliente = await Clientes.findOne({
         where: { CLIENTE_ID: id }
@@ -392,7 +393,7 @@ const editarCotizaciones = async (req, res) => {
     const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: CLIENTE_ID } });
     try {
         // 1. Catálogo (Siempre se lee de la API para tener stock actualizado)
-        const respCatalogo = await fetch(`https://apirest.papeleriacornejo.com/codigos?pagina=${pagina}&termino=${termino}&sort=${sort}&order=${order}`);
+        const respCatalogo = await fetch(`${process.env.API_URL}/codigos?pagina=${pagina}&termino=${termino}&sort=${sort}&order=${order}`);
         let articulosCatalogo = await respCatalogo.json();
         const arreglo = articulosCatalogo.datos;
         const porcentajeDesc = Number(descuento.DESCUENTO) / 100;
@@ -402,7 +403,7 @@ const editarCotizaciones = async (req, res) => {
         if (!req.session.cotizacionEditar || req.session.cotizacionIdActual !== id) {
             console.log("Cargando desde DB (Primera vez o cambio de ID)");
             
-            const respDetalle = await fetch(`https://apirest.papeleriacornejo.com/cotizaciones/det/${id}`);
+            const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
             const partidasDB = await respDetalle.json();
             console.log('articulos de la db a editar', partidasDB)
             // Guardamos en sesión tanto las partidas como el ID que estamos editando
@@ -584,7 +585,7 @@ const guardarCotizacionCompleta = async (req, res) => { // <--- Este 'res' es el
         };
 
         // CAMBIA 'const res' por 'const respuesta'
-        const respuesta = await fetch('https://apirest.papeleriacornejo.com/cotizacion/guardar', { 
+        const respuesta = await fetch(`${process.env.API_URL}/cotizacion/guardar`, { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -639,7 +640,7 @@ const guardarCotizacionEditando = async (req, res) => { // <--- Este 'res' es el
         };
 
         // CAMBIA 'const res' por 'const respuesta'
-        const respuesta = await fetch('https://apirest.papeleriacornejo.com/cotizacion/guardar-editando', { 
+        const respuesta = await fetch(`${process.env.API_URL}/cotizacion/guardar-editando`, { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -682,7 +683,7 @@ const cancelarCotizacion = async (req, res) => {
         console.log("Cancelando cotización ID:", id);
 
         // Especificamos el método POST y enviamos el CSRF si es necesario
-        const respuesta = await fetch(`https://apirest.papeleriacornejo.com/cotizaciones/cancelar/${id}`, {
+        const respuesta = await fetch(`${process.env.API_URL}/cotizaciones/cancelar/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -716,14 +717,14 @@ const verCotizacion = async (req, res) => {
     const descuentocliente = Number(descuento.DESCUENTO) / 100;
     try {
         // 1. Catálogo (Siempre se lee de la API para tener stock actualizado)
-        const respDetalle = await fetch(`https://apirest.papeleriacornejo.com/cotizaciones/det/${id}`);
+        const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
         const partidasDB = await respDetalle.json();
         console.log('CDB', partidasDB)
         console.log('des', descuentocliente)
         const partidasConCalculos = await Promise.all(partidasDB.map(async (item) => {
     // Supongamos que quieres sumar el IMPORTE + IMPUESTO
     // Ojo: Como en tu JSON vienen como Strings, hay que usar Number()
-            const respArt = await fetch(`https://apirest.papeleriacornejo.com/codigos/${item.ART_ID}`);
+            const respArt = await fetch(`${process.env.API_URL}/codigos/${item.ART_ID}`);
             const dataArt = await respArt.json();
             const infoActual = dataArt[0]; // Tomamos el primer resultado
             const suma = Number(item.PRECIO) * Number(1 - descuentocliente) + Number(item.IMPUESTO);
@@ -791,7 +792,7 @@ const enviarPdf = async(req, res)=>{
         page.drawText(`Cliente: ${NOMBRE}`, { x: 50, y: yPosition, size: 12, font: fontRegular });
         yPosition -= 40;
 
-        const respDetalle = await fetch(`https://apirest.papeleriacornejo.com/cotizaciones/det/${id}`);
+        const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
         const partidasDB = await respDetalle.json();
 
         partidasDB.forEach(item => {
@@ -810,7 +811,7 @@ const enviarPdf = async(req, res)=>{
             }
         });
 
-        const respuesta = await fetch(`https://apirest.papeleriacornejo.com/cotizaciones/edit/${id}`);
+        const respuesta = await fetch(`${process.env.API_URL}/cotizaciones/edit/${id}`);
         const datosCot = await respuesta.json();
         
         const total = datosCot[0].COSTO_TOTAL;
@@ -939,7 +940,7 @@ const pedidoCrear = async (req, res) =>{
     const usuario =  req.usuario.CLIENTE_ID;
     console.log('Datos para pedido***', req.body);
 
-    const respDetalle = await fetch(`https://apirest.papeleriacornejo.com/cotizaciones/det/${id}`);
+    const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
     const partidasDB = await respDetalle.json();
     console.log('partidas para pedido', partidasDB);
     const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: usuario } });
@@ -971,14 +972,14 @@ const pedidoCrear = async (req, res) =>{
         };
         console.log('datos para pedido *****¨**********', data);
         // CAMBIA 'const res' por 'const respuesta'
-        const respuesta = await fetch('https://apirest.papeleriacornejo.com/pedidos/guardar', { 
+        const respuesta = await fetch(`${process.env.API_URL}/pedidos/guardar`, { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
         if(respuesta.ok){
             console.log('pedido creado con exito');
-            const cerrar = await fetch(`https://apirest.papeleriacornejo.com/cotizaciones/cerrar/${id}`, {
+            const cerrar = await fetch(`${process.env.API_URL}/cotizaciones/cerrar/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1008,7 +1009,7 @@ const mostrarPedidos = async (req, res) => {
     const { id } = req.params;
     const usuario = req.usuario;
     console.log('mostrar pedidos de cliente:', usuario);
-    const respuesta = await fetch(`https://apirest.papeleriacornejo.com/pedidos/${id}`);
+    const respuesta = await fetch(`${process.env.API_URL}/pedidos/${id}`);
     const pedidos = await respuesta.json(); // Esto es el [ { ... } ]
     const cliente = await Clientes.findOne({
         where: { CLIENTE_ID: id }
