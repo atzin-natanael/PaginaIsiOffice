@@ -712,36 +712,51 @@ const cancelarCotizacion = async (req, res) => {
 }
 const verCotizacion = async (req, res) => {
     const { id } = req.params;
-    const {CLIENTE_ID} = req.usuario;
-    const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: CLIENTE_ID } });
-    const descuentocliente = Number(descuento.DESCUENTO) / 100;
+    const { CLIENTE_ID } = req.usuario;
+    
     try {
-        // 1. Catálogo (Siempre se lee de la API para tener stock actualizado)
+        const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: CLIENTE_ID } });
+        // Si no hay descuento, usamos 0 para evitar errores
+        const descuentocliente = descuento ? (Number(descuento.DESCUENTO) / 100) : 0;
+
         const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
         const partidasDB = await respDetalle.json();
-        console.log('CDB', partidasDB)
-        console.log('des', descuentocliente)
+
         const partidasConCalculos = await Promise.all(partidasDB.map(async (item) => {
-    // Supongamos que quieres sumar el IMPORTE + IMPUESTO
-    // Ojo: Como en tu JSON vienen como Strings, hay que usar Number()
             const respArt = await fetch(`${process.env.API_URL}/codigos/${item.ART_ID}`);
             const dataArt = await respArt.json();
-            const infoActual = dataArt[0]; // Tomamos el primer resultado
-            const suma = Number(item.PRECIO) * Number(1 - descuentocliente) + Number(item.IMPUESTO);
+            const infoActual = dataArt[0];
+
+            // --- CÁLCULOS MATEMÁTICOS (Sin redondear aún) ---
+            const precioBase = Number(item.PRECIO);
+            const cantidad = Number(item.CANTIDAD || 1); // Asegúrate de tener la cantidad
+            const impuestoUnitario = Number(item.IMPUESTO || 0);
+
+            // Precio con descuento aplicado + impuesto
+            const precioUnitarioFinal = (precioBase * (1 - descuentocliente)) + impuestoUnitario;
+            
+            // Importe total de esta partida (Cantidad * Precio Final)
+            const importeTotalPartida = precioUnitarioFinal * cantidad;
 
             return {
-                ...item, // Esto copia todo lo que ya tenía (ID, ART_ID, NOMBRE, etc.)
-                PRECIO_CON_DESCUENTO: suma.toFixed(2), // Esta es tu variable nueva
+                ...item,
+                // Guardamos los números para el cálculo del total general
+                VALOR_NUMERICO_TOTAL: importeTotalPartida, 
+                // Formateamos para la vista (esto es lo que verá el usuario)
+                PRECIO_CON_DESCUENTO: precioUnitarioFinal.toFixed(2),
+                IMPORTE_TOTAL: importeTotalPartida.toFixed(2),
                 EXISTENCIA: infoActual ? (Number(infoActual.EXISTENCIA_A) + Number(infoActual.EXISTENCIA_T)) : 0,
             };
-         }));
-         const totalCot = partidasConCalculos.reduce((acc, item) => acc + Number(item.IMPORTE_TOTAL || 0), 0);
-    //const totalCot = carritoSesion.reduce((acc, item) => acc + Number(item.IMPORTE_TOTAL || 0), 0);
-    // Sumamos directamente el IMPORTE_TOTAL que ya calculamos arriba
-    return res.render('cotizacion/ver', {
+        }));
+
+        // --- CÁLCULO DEL TOTAL GENERAL ---
+        // Sumamos los valores numéricos, NO los strings de toFixed
+        const totalCot = partidasConCalculos.reduce((acc, item) => acc + item.VALOR_NUMERICO_TOTAL, 0);
+
+        return res.render('cotizacion/ver', {
             pagina: 'Ver Cotización',
             cotizacion: partidasConCalculos,
-            totalCot: totalCot,
+            totalCot: totalCot.toFixed(2), // Redondeamos solo al final para la vista
             id: id
         });
 
