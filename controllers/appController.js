@@ -814,23 +814,24 @@ const enviarPdf = async(req, res)=>{
         let sumaTotalCalculada = 0;
 
         partidasDB.forEach(item => {
-            const nombreCorto = item.NOMBRE.substring(0, 60);
-            
-            // Convertimos a número para asegurar que la suma sea correcta
-            const importeItem = Number(item.IMPORTE_TOTAL) || 0;
-            sumaTotalCalculada += importeItem;
+    // ... tu código anterior
+        const importeItem = Number(item.IMPORTE_TOTAL) || 0;
+        
+        // TRUCO: Usamos Math.floor para evitar que el centavo suba
+        const importeSeguro = (Math.floor(importeItem * 100) / 100).toFixed(2);
 
-            page.drawText(`${item.CANTIDAD}`, { x: 50, y: yPosition, size: 9, font: fontRegular });
-            page.drawText(nombreCorto, { x: 100, y: yPosition, size: 9, font: fontRegular });
-            
-            // Mostramos el importe de la partida con 2 decimales
-            page.drawText(`$${importeItem.toFixed(2)}`, { x: 500, y: yPosition, size: 9, font: fontRegular });
-            
-            yPosition -= 15;
-        });
+        page.drawText(`${item.CANTIDAD}`, { x: 50, y: yPosition, size: 9, font: fontRegular });
+        page.drawText(nombreCorto, { x: 100, y: yPosition, size: 9, font: fontRegular });
+        
+        // Dibujamos el valor "forzado" a 2 decimales sin redondear hacia arriba
+        page.drawText(`$${importeSeguro}`, { x: 500, y: yPosition, size: 9, font: fontRegular });
+        
+        sumaTotalCalculada += Number(importeSeguro); // Sumamos el valor ya formateado
+        // ...
+    });
 
-        // 2. En lugar de usar datosCot[0].COSTO_TOTAL, usa nuestra suma
-        const total = sumaTotalCalculada.toFixed(2);
+    // Al final, el total también coincidirá
+    const total= sumaTotalCalculada.toFixed(2);
 
         // 1. ESPACIO DESPUÉS DEL ÚLTIMO ARTÍCULO
         yPosition -= 20; 
