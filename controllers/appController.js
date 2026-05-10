@@ -831,7 +831,7 @@ const enviarPdf = async(req, res)=>{
     });
 
     // Al final, el total también coincidirá
-    const total= sumaTotalCalculada.toFixed(2);
+        const total = partidasConCalculos.reduce((acc, item) => acc + Number(item.VALOR_NUMERICO_TOTAL), 0);
 
         // 1. ESPACIO DESPUÉS DEL ÚLTIMO ARTÍCULO
         yPosition -= 20; 
