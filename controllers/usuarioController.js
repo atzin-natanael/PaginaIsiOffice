@@ -104,12 +104,38 @@ const registrar = async(req, res)=>{
             }
         })
     }
+    let CLIENTE_ID_OBT = "";
+    try{
+        console.log('API URL:',     process.env.API_URL);
+        console.log('Clave del cliente:', clave);
+        const response = await fetch(`${process.env.API_URL}/cliente/${clave}`);
+        if (!response.ok) {
+            return res.render('auth/registro',{
+            pagina: 'Crear Cuenta',
+            errores: [{msg: 'Error en la clave del cliente, no se pudo verificar'}],
+            usuario: {
+                NOMBRE: req.body.nombre,
+                EMAIL: req.body.email,
+                CLIENTE_ID: req.body.clave
+            }
+        })
+        }
+        const data = await response.json();
+        console.log('Datos obtenidos de la API:', data);
+        CLIENTE_ID_OBT = data[0].CLIENTE_ID;   
+        console.log('CLIENTE_ID obtenido:', CLIENTE_ID_OBT);
+    }
+    catch(error){
+        console.log('Error al obtener datos del cliente desde la API');
+        console.log(error)
+    }
+    console.log('CLIENTE_ID final:', CLIENTE_ID_OBT);
     //Almacenar usuario
     const usuario = await Usuario.create({
         NOMBRE: nombre,
         EMAIL: email,
         password,
-        CLIENTE_ID: clave,
+        CLIENTE_ID: CLIENTE_ID_OBT, 
         token: generarId()
     })
     //Envia email de confirmacion

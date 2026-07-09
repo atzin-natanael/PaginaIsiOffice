@@ -19,6 +19,7 @@ DescuentosClientes.belongsTo(Clientes, {foreignKey: 'CLIENTE_ID'})
 Clientes.hasOne(DescuentosClientes, {foreignKey: 'CLIENTE_ID',as: 'DESCUENTO_CLIENTE'})
 Usuario.belongsTo(Clientes, {foreignKey: 'CLIENTE_ID'})
 
+
 Clientes.hasMany(Pedidos, {foreignKey: 'CLIENTE_ID'})
 Pedidos.belongsTo(Clientes, {foreignKey: 'CLIENTE_ID'})
 

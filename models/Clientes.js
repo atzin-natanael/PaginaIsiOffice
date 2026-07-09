@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
 import db from '../config/db.js'
 
-const clientes = db.define('CLIENTES_PAGWEB_ISI', {
+const clientes = db.define('CLIENTES_PAGWEB_ISI', {                                                                                                                                                                                                                                                                                                                                                                                                                                               
     CLIENTE_ID: {
         type: DataTypes.INTEGER,
         allowNull: false,

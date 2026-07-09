@@ -1,7 +1,7 @@
 extends ../layout/index
 
 block contenido
-    //pre=JSON.stringify(cotizaciones, null, 2)
+    //pre=JSON.stringify(cliente, null, 2)
     h2(class='text-3xl font-extrabold text-center mb-10')= pagina
     div(class="flex flex-wrap gap-4 justify-center")
         - const activeClass = "shadow-md brightness-110 transform scale-105"
@@ -14,14 +14,15 @@ block contenido
 
         a(href="?estatus=VENCIDA" class=`${baseClass} ${estatusActual === 'VENCIDA' ? 'bg-red-600 text-white border-red-600 ' + activeClass : 'bg-white text-red-600 border-red-200 hover:bg-red-50'}`) 
             | Vencidas
-    div(class='max-w-6xl mx-auto mb-10 mt-10')
+    div(class='max-w-8xl mx-auto mb-10 mt-10')
         if cotizaciones.length
             div(class='bg-white shadow-xl rounded-lg overflow-hidden')
                 table(class='min-w-full divide-y divide-gray-200')
                     thead.bg-gray-800.text-white
                         tr
-                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') ID / Fecha Creación
-                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Fecha de Vencimiento
+                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') ID 
+                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Fecha Creación / Vencimiento
+                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Cliente
                             th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Total
                             th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Estatus
                             th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Ver
@@ -36,15 +37,19 @@ block contenido
                                 //- 1. ID / Fecha
                                 td(class='px-6 py-4 whitespace-nowrap')
                                     div(class='text-sm font-bold text-blue-600') ID # #{cot.COTIZACION_ID}
-                                    div(class='text-xs text-gray-500')= new Date(cot.createdAt).toLocaleDateString('es-MX')
                                 td(class='px-6 py-4 whitespace-nowrap')
-                                    div(class='text-xs text-gray-500')= new Date(cot.FECHA_VENCIMIENTO).toLocaleDateString('es-MX')    
+                                    div(class='text-xs text-gray-500') Creado:  #{new Date(cot.createdAt).toLocaleDateString('es-MX')}
+                                    div(class='text-xs text-gray-500') Vencimiento: #{new Date(cot.FECHA_VENCIMIENTO).toLocaleDateString('es-MX')}
                                 //- 2. Descripción
                                 //- td(class='px-6 py-4')
                                 //-     div(class='text-sm text-gray-900')= cot.DESCRIPCION
                                 //-     div(class='text-xs text-gray-400') Cliente: #{cliente.CLAVE_CLIENTE}
                                 
                                 //- 3. Total
+                                td(class='px-6 py-4 whitespace-nowrap')
+                                    div(class='text-sm font-bold text-blue-600')= cliente.CLAVE_CLIENTE
+                                    div(class='text-xs text-gray-500')= cliente.NOMBRE
+
                                 td(class='px-6 py-4 whitespace-nowrap')
                                     span(class='px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800')
                                         | $#{cot.COSTO_TOTAL}
@@ -61,8 +66,8 @@ block contenido
                                         span(class='px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-gray-100 text-gray-800') #{cot.ESTATUS}
                                 
                                 td(class='px-6 py-4 whitespace-nowrap text-center')
-                                    a(href=`/cotizacion/ver/${cot.COTIZACION_ID}` title="ver" class=`inline-block ${cot.ESTATUS !== 'PENDIENTE' ? 'pointer-events-none cursor-not-allowed' : '' }`)
-                                        img(src="/uploads/ver.png" alt="Ver" class=`${cot.ESTATUS === 'PENDIENTE' ? 'w-6 h-6 hover:scale-110 transition-transform mx-auto' : 'w-6 h-6 opacity-50 cursor-not-allowed mx-auto pointer-events-none'}`)
+                                    a(href=`/cotizacion/ver/${cot.COTIZACION_ID}` title="ver" class=`inline-block`)
+                                        img(src="/uploads/ver.png" alt="Ver" class=`w-6 h-6 hover:scale-110 transition-transform mx-auto`)
                                 
                                 td(class='px-6 py-4 whitespace-nowrap text-center')
                                     a(href=`/cotizacion/enviar/${cot.COTIZACION_ID}` title="Enviar" class=`inline-block ${cot.ESTATUS !== 'PENDIENTE' ? 'pointer-events-none cursor-not-allowed' : '' }`)

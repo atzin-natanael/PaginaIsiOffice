@@ -1,6 +1,7 @@
 extends ../layout/index
 
 block contenido
+    //pre=JSON.stringify(pedidos, null, 2)
     h2(class='text-3xl font-extrabold text-center mb-10')= pagina
     div(class='max-w-6xl mx-auto mb-10')
         if pedidos.length
@@ -43,11 +44,11 @@ block contenido
                                         span(class='px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-gray-100 text-gray-800') #{ped.ESTATUS}
                                 
                                 td(class='px-6 py-4 whitespace-nowrap text-center')
-                                    a(href=`/pedizacion/ver/${ped.COTIZACION_ID}` title="ver" class=`inline-block ${ped.ESTATUS !== 'PENDIENTE' ? 'pointer-events-none cursor-not-allowed' : '' }`)
-                                        img(src="/uploads/ver.png" alt="Ver" class=`${ped.ESTATUS === 'PENDIENTE' ? 'w-6 h-6 hover:scale-110 transition-transform mx-auto' : 'w-6 h-6 opacity-50 cursor-not-allowed mx-auto pointer-events-none'}`)
+                                    a(href=`/pedido/ver/${ped.PEDIDO_ID}` title="ver")
+                                        img(src="/uploads/ver.png" alt="Ver" class='w-6 h-6 hover:scale-110 transition-transform mx-auto')
                                 
                                 td(class='px-6 py-4 whitespace-nowrap text-center')
-                                    a(href=`/pedizacion/enviar/${ped.COTIZACION_ID}` title="Enviar" class=`inline-block ${ped.ESTATUS !== 'PENDIENTE' ? 'pointer-events-none cursor-not-allowed' : '' }`)
+                                    a(href=`/pedido/enviar/${ped.PEDIDO_ID}` title="Enviar" class=`inline-block ${ped.ESTATUS !== 'PENDIENTE' ? 'pointer-events-none cursor-not-allowed' : '' }`)
                                         img(src="/uploads/mail.png" alt="Enviar" class=`${ped.ESTATUS === 'PENDIENTE' ? 'w-6 h-6 hover:scale-110 transition-transform mx-auto' : 'w-6 h-6 opacity-50 cursor-not-allowed mx-auto pointer-events-none'}`)
                                 
         else

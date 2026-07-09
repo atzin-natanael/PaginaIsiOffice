@@ -369,12 +369,13 @@ const mostrarCotizaciones = async (req, res) => {
     const { id } = req.params;
     const estatus = req.query.estatus || 'PENDIENTE'; // Valor por defecto
     const usuario = req.usuario;
-    console.log('mostrar cotizaciones de cliente:', usuario);
+    const cliente = await fetch(`${process.env.API_URL}/cliente/id/${usuario.CLIENTE_ID}`).then(res => res.json()).then(data => data[0]);
+
     const respuesta = await fetch(`${process.env.API_URL}/cotizaciones/${id}?estatus=${estatus}`);
     const cotizaciones = await respuesta.json(); // Esto es el [ { ... } ]
-    const cliente = await Clientes.findOne({
-        where: { CLIENTE_ID: id }
-    });
+    // const cliente = await Clientes.findOne({
+    //     where: { CLIENTE_ID: id }
+    // });
 
     console.log("Cotizaciones encontradas:", cotizaciones);
     res.render('cotizacion/mostrar', {
@@ -765,6 +766,61 @@ const verCotizacion = async (req, res) => {
         res.redirect('/cotizaciones');
     }
 }
+const verPedido = async (req, res) => {
+    const { id } = req.params;
+    const { CLIENTE_ID } = req.usuario;
+    
+    try {
+        const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: CLIENTE_ID } });
+        // Si no hay descuento, usamos 0 para evitar errores
+        const descuentocliente = descuento ? (Number(descuento.DESCUENTO) / 100) : 0;
+
+        const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
+        const partidasDB = await respDetalle.json();
+
+        const partidasConCalculos = await Promise.all(partidasDB.map(async (item) => {
+            const respArt = await fetch(`${process.env.API_URL}/codigos/${item.ART_ID}`);
+            const dataArt = await respArt.json();
+            const infoActual = dataArt[0];
+
+            // --- CÁLCULOS MATEMÁTICOS (Sin redondear aún) ---
+            const precioBase = Number(item.PRECIO);
+            const cantidad = Number(item.CANTIDAD || 1); // Asegúrate de tener la cantidad
+            const impuestoUnitario = Number(item.IMPUESTO || 0);
+
+            // Precio con descuento aplicado + impuesto
+            const precioUnitarioFinal = (precioBase * (1 - descuentocliente)) + impuestoUnitario;
+            
+            // Importe total de esta partida (Cantidad * Precio Final)
+            const importeTotalPartida = precioUnitarioFinal * cantidad;
+
+            return {
+                ...item,
+                // Guardamos los números para el cálculo del total general
+                VALOR_NUMERICO_TOTAL: importeTotalPartida, 
+                // Formateamos para la vista (esto es lo que verá el usuario)
+                PRECIO_CON_DESCUENTO: precioUnitarioFinal.toFixed(2),
+                IMPORTE_TOTAL: importeTotalPartida.toFixed(2),
+                EXISTENCIA: infoActual ? (Number(infoActual.EXISTENCIA_A) + Number(infoActual.EXISTENCIA_T)) : 0,
+            };
+        }));
+
+        // --- CÁLCULO DEL TOTAL GENERAL ---
+        // Sumamos los valores numéricos, NO los strings de toFixed
+        const totalCot = partidasConCalculos.reduce((acc, item) => acc + item.VALOR_NUMERICO_TOTAL, 0);
+
+        return res.render('pedido/ver', {
+            pagina: 'Ver Pedido',
+            pedido: partidasConCalculos,
+            totalCot: totalCot.toFixed(2), // Redondeamos solo al final para la vista
+            id: id
+        });
+
+    } catch (error) {
+        console.error("Error al cargar edición:", error);
+        res.redirect('/cotizaciones');
+    }
+}
 const enviarPdf = async(req, res)=>{
     const {id} = req.params;
     const {EMAIL, NOMBRE} = req.usuario;
@@ -1061,6 +1117,7 @@ export {
     enviarPdf,
     datosCotizacion,
     pedidoCrear,
-    mostrarPedidos
+    mostrarPedidos,
+    verPedido
     //agregarEditandoArticuloACotizacion
 }
