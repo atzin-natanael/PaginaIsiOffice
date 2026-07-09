@@ -3,27 +3,27 @@ block contenido
     //pre= JSON.stringify(paginaActual, undefined, 2)
         //- h1.text-4xl.my-10.font-extrabold.text-center Isi 
         //-     span.font-normal Office
-    div(class="flex flex-wrap gap-4 justify-center")
-        - const baseClass = "px-6 py-2 rounded text-md font-bold transition-all border"
+    //- div(class="flex flex-wrap gap-4 justify-center")
+    //-     - const baseClass = "px-6 py-2 rounded text-md font-bold transition-all border"
         
-        a(href="?categoria=" class=`${baseClass} ${categoriaActual === '1' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
-            span(class="mr-2") ✏️
-            | Papelería
-        a(href="?categoria=2" class=`${baseClass} ${categoriaActual === '2' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
-            span(class="mr-2") 🎁
-            | Regalos
-        a(href="?categoria=3" class=`${baseClass} ${categoriaActual === '3' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
-            span(class="mr-2") 🎨
-            | Arte
-        a(href="?categoria=4" class=`${baseClass} ${categoriaActual === '4' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
-            span(class="mr-2") 💻
-            | Tecnología
-        a(href="?categoria=5" class=`${baseClass} ${categoriaActual === '5' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
-            span(class="mr-2") 🗓️
-            | Temporada
-        a(href="?categoria=6" class=`${baseClass} ${categoriaActual === '6' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
-            span(class="mr-2") 📁
-            | Oficina
+    //-     a(href="?categoria=" class=`${baseClass} ${categoriaActual === '1' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+    //-         span(class="mr-2") ✏️
+    //-         | Papelería
+    //-     a(href="?categoria=2" class=`${baseClass} ${categoriaActual === '2' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+    //-         span(class="mr-2") 🎁
+    //-         | Regalos
+    //-     a(href="?categoria=3" class=`${baseClass} ${categoriaActual === '3' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+    //-         span(class="mr-2") 🎨
+    //-         | Arte
+    //-     a(href="?categoria=4" class=`${baseClass} ${categoriaActual === '4' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+    //-         span(class="mr-2") 💻
+    //-         | Tecnología
+    //-     a(href="?categoria=5" class=`${baseClass} ${categoriaActual === '5' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+    //-         span(class="mr-2") 🗓️
+    //-         | Temporada
+    //-     a(href="?categoria=6" class=`${baseClass} ${categoriaActual === '6' ? ' text-white border-stone-900' : 'bg-white border-stone-900 hover:bg-red-50'}`) 
+    //-         span(class="mr-2") 📁
+    //-         | Oficina
     h2.text-center.text-2xl.font-extrabold.mt-5= pagina
     div(class="mx-auto max-w-4xl px-4")
         form(action="/catalogo" method="GET" class="flex flex-col md:flex-row gap-3 items-center justify-center p-4 rounded-xl shadow-lg")
