@@ -727,17 +727,19 @@ const verCotizacion = async (req, res) => {
             const respArt = await fetch(`${process.env.API_URL}/codigos/${item.ART_ID}`);
             const dataArt = await respArt.json();
             const infoActual = dataArt[0];
-
-            // --- CÁLCULOS MATEMÁTICOS (Sin redondear aún) ---
+            console.log('información actual', infoActual)
+            // ---   CÁLCULOS MATEMÁTICOS (Sin redondear aún) ---
             const precioBase = Number(item.PRECIO);
+            console.log('precio base', precioBase)
             const cantidad = Number(item.CANTIDAD || 1); // Asegúrate de tener la cantidad
             const impuestoUnitario = Number(item.IMPUESTO || 0);
 
             // Precio con descuento aplicado + impuesto
             const precioUnitarioFinal = (precioBase * (1 - descuentocliente)) + impuestoUnitario;
-            
+            console.log('precio unitario final', precioUnitarioFinal)
             // Importe total de esta partida (Cantidad * Precio Final)
             const importeTotalPartida = precioUnitarioFinal * cantidad;
+            console.log('importe total partida', importeTotalPartida)
 
             return {
                 ...item,
