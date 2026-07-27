@@ -15,7 +15,8 @@ import {
   guardarCotizacionEditando,
   verCotizacion,
   enviarPdf,
-  datosCotizacion
+  datosCotizacion,
+  verPdf
 } from '../controllers/appController.js'
 import {protegerRuta, protegerRutaCliente} from '../middlewares/protegerRuta.js'
 import protegerApi from '../middlewares/protegerApi.js'
@@ -31,6 +32,8 @@ router.get('/vaciar-carrito', vaciarCarritoSesion)
 router.get('/mostrar/:id', protegerRuta, protegerRutaCliente, verifyCsrfToken, mostrarCotizaciones)
 router.get('/editar/:id', protegerRuta, editarCotizaciones)
 router.get('/enviar/:id', protegerRuta, enviarPdf)
+router.get('/pdf/:id', protegerRuta, verPdf)
+
 router.post('/datos/:id', protegerRuta,
   body('metodoPago').notEmpty().withMessage('El método de pago es obligatorio'),
   body('formaPago').notEmpty().withMessage('La forma de pago es obligatoria'),

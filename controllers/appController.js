@@ -823,6 +823,138 @@ const verPedido = async (req, res) => {
         res.redirect('/cotizaciones');
     }
 }
+const verPdf = async (req, res) => {
+    const {id} = req.params;
+    const {EMAIL, NOMBRE} = req.usuario;
+    console.log('mail', EMAIL)
+    try{
+        const pdfDoc = await PDFDocument.create()
+    
+    // Embed the Times Roman font
+        const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
+        const fontRegular = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+        // Add a blank page to the document
+        const page = pdfDoc.addPage()
+        //imagen
+        const logoPath = path.join(process.cwd(), 'public/uploads/logo.png');
+        const logoBytes = await fs.readFile(logoPath);
+        const logoImage = await pdfDoc.embedPng(logoBytes); // Usa embedJpg si es .jpg
+
+// Obtener dimensiones originales para escalar
+        const anchoMax = 100;
+        const altoMax = 100;
+        const logoDims = logoImage.scaleToFit(anchoMax, altoMax); // Escala proporcionalmente
+        // Get the width and height of the page
+        const { width, height } = page.getSize()
+        let yPosition = height - 50;
+        // Draw a string of text toward the top of the page
+        const fontSize = 30
+        page.drawImage(logoImage, {
+            x: 420, // Alineado a la izquierda
+            y: yPosition - logoDims.height, // Lo bajamos de la coordenada Y inicial
+            width: logoDims.width,
+            height: logoDims.height,
+        });
+
+        // Ajustar yPosition para que el texto no se encime con el logo
+        yPosition -= (logoDims.height + 20);
+        //encabezado
+        page.drawText(`COTIZACIÓN No. ${id}`, { x: 50, y: yPosition, size: 20, font: fontBold });
+        yPosition -= 30;
+        page.drawText(`Cliente: ${NOMBRE}`, { x: 50, y: yPosition, size: 12, font: fontRegular });
+        yPosition -= 40;
+
+        const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
+        const partidasDB = await respDetalle.json();
+
+        // 1. Creamos una variable para acumular el total real de las partidas
+        let sumaTotalCalculada = 0;
+
+        partidasDB.forEach(item => {
+            const nombreCorto = item.NOMBRE.substring(0, 60);
+            
+            // Convertimos a número para asegurar que la suma sea correcta
+            const importeItem = Number(item.IMPORTE_TOTAL) || 0;
+    
+            // TRUCO: Usamos Math.floor para evitar que el centavo suba
+            const importeSeguro = (Math.floor(importeItem * 100) / 100).toFixed(2);
+
+            page.drawText(`${item.CANTIDAD}`, { x: 50, y: yPosition, size: 9, font: fontRegular });
+            page.drawText(nombreCorto, { x: 100, y: yPosition, size: 9, font: fontRegular });
+            
+            // Dibujamos el valor "forzado" a 2 decimales sin redondear hacia arriba
+            page.drawText(`$${importeSeguro}`, { x: 500, y: yPosition, size: 9, font: fontRegular });
+            
+            sumaTotalCalculada += Number(importeSeguro);
+            
+            yPosition -= 15;
+        });
+
+        // 2. En lugar de usar datosCot[0].COSTO_TOTAL, usa nuestra suma
+        const total = sumaTotalCalculada.toFixed(2);
+
+        // 1. ESPACIO DESPUÉS DEL ÚLTIMO ARTÍCULO
+        yPosition -= 20; 
+
+        // 2. DIBUJAR LÍNEA DIVISORIA (Opcional, se ve más pro)
+        page.drawLine({
+            start: { x: 400, y: yPosition+20},
+            end: { x: 550, y: yPosition +20},
+            thickness: 1,
+            color: rgb(0.8, 0.8, 0.8)
+        });
+
+        // 3. PINTAR EL TOTAL
+        // Usamos fontBold para que resalte
+        page.drawText('TOTAL:', { 
+            x: 400, 
+            y: yPosition, 
+            size: 12, 
+            font: fontBold 
+        });
+
+        page.drawText(`$${total}`, { 
+            x: 500, 
+            y: yPosition, 
+            size: 14, // Un poco más grande
+            font: fontBold,
+            color: rgb(0.88, 0.11, 0.28) // El rojo que te gusta
+        });
+        // 1. Bajamos un poco después del total
+        yPosition -= 40;
+
+        // 2. Definimos el texto del disclaimer
+        // Usamos un array de strings si queremos controlar los saltos de línea manualmente
+        const disclaimer = [
+            "* Los precios están sujetos a cambios sin previo aviso. Incluyen Iva*",
+            "* La disponibilidad de los artículos está sujeta a inventario al momento de la compra.",
+            "* Algunos artículos podrían ser descontinuados por el fabricante o presentar retrasos en suministro."
+        ];
+
+        // 3. Dibujamos cada línea del disclaimer
+        disclaimer.forEach(linea => {
+            page.drawText(linea, {
+                x: 50,
+                y: yPosition,
+                size: 8, // Fuente pequeña para que no robe atención
+                font: fontRegular,
+                color: rgb(0.4, 0.4, 0.4), // Gris oscuro profesional
+            });
+            yPosition -= 12; // Espacio entre líneas del disclaimer
+        });
+
+        // Serialize and Send...
+        // Serialize the PDFDocument to bytes (a Uint8Array)
+        const pdfBytes = await pdfDoc.save()
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="COT${id}_documento.pdf"`);
+        return res.send(Buffer.from(pdfBytes));
+    }catch (error) {
+        console.error("Error al generar PDF:", error);
+        res.status(500).send("Error al generar PDF");
+    }
+}
 const enviarPdf = async(req, res)=>{
     const {id} = req.params;
     const {EMAIL, NOMBRE} = req.usuario;
@@ -1120,6 +1252,7 @@ export {
     datosCotizacion,
     pedidoCrear,
     mostrarPedidos,
-    verPedido
+    verPedido,
+    verPdf
     //agregarEditandoArticuloACotizacion
 }

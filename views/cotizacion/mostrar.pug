@@ -25,7 +25,7 @@ block contenido
                             th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Cliente
                             th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Total
                             th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Estatus
-                            th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Ver
+                            th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Descargar
                             th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Enviar a mi correo
                             th(class='px-6 py-3 text-center text-xs font-bold uppercase tracking-wider') Editar
                             //th(class='px-6 py-3 text-center text-xs font-bold uppercase tracking-wider') Cancelar
@@ -66,8 +66,8 @@ block contenido
                                         span(class='px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-gray-100 text-gray-800') #{cot.ESTATUS}
                                 
                                 td(class='px-6 py-4 whitespace-nowrap text-center')
-                                    a(href=`/cotizacion/ver/${cot.COTIZACION_ID}` title="ver" class=`inline-block`)
-                                        img(src="/uploads/ver.png" alt="Ver" class=`w-6 h-6 hover:scale-110 transition-transform mx-auto`)
+                                    a(href=`/cotizacion/pdf/${cot.COTIZACION_ID}` title="Descargar Pdf" class=`inline-block`)
+                                        img(src="/uploads/pdf.png" alt="Descargar Pdf" class=`w-6 h-6 hover:scale-110 transition-transform mx-auto`)
                                 
                                 td(class='px-6 py-4 whitespace-nowrap text-center')
                                     a(href=`/cotizacion/enviar/${cot.COTIZACION_ID}` title="Enviar" class=`inline-block ${cot.ESTATUS !== 'PENDIENTE' ? 'pointer-events-none cursor-not-allowed' : '' }`)
