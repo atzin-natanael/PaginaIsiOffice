@@ -1,7 +1,7 @@
 extends ../layout/index
 
 block contenido
-    h2(class='text-3xl font-extrabold text-center my-10') Datos de Facturación
+    h2(class='text-3xl font-extrabold text-center my-10') Datos para Facturación
     //- Estos pre son excelentes para debug, pero quítalos antes de producción
     //- pre=JSON.stringify(COTIZACION_ID , null, 2)
     
@@ -49,7 +49,7 @@ block contenido
                 button(type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-lg shadow-md uppercase text-sm transition-all flex items-center justify-center gap-2" onclick="return confirm('¿Estás seguro de que deseas generar la factura?')")
                     svg(xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor")
                         path(fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd")
-                    | Confirmar y Facturar
+                    | Confirmar datos
 
 block scripts
     script(src="/src/js/facturacion.js")
