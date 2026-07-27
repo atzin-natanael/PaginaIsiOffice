@@ -28,7 +28,7 @@ block contenido
                             th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Ver
                             th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Enviar a mi correo
                             th(class='px-6 py-3 text-center text-xs font-bold uppercase tracking-wider') Editar
-                            th(class='px-6 py-3 text-center text-xs font-bold uppercase tracking-wider') Cancelar
+                            //th(class='px-6 py-3 text-center text-xs font-bold uppercase tracking-wider') Cancelar
                             th(class='px-6 py-3 text-center text-xs font-bold uppercase tracking-wider') Crear Pedido
                             th(class='px-6 py-3 text-center text-xs font-bold uppercase tracking-wider')
                     tbody(class='bg-white divide-y divide-gray-200')
@@ -78,15 +78,15 @@ block contenido
                                         img(src="/uploads/boton-editar.png" alt="Editar" class=`${cot.ESTATUS === 'PENDIENTE' ? 'w-6 h-6 hover:scale-110 transition-transform mx-auto' : 'w-6 h-6 opacity-50 cursor-not-allowed mx-auto pointer-events-none'}`)
 
                                 //- 6. Columna CANCELAR
-                                td(class='px-6 py-4 whitespace-nowrap text-center')
-                                    if cot.ESTATUS === 'PENDIENTE'
-                                        form(action=`/cotizacion/cancelar/${cot.COTIZACION_ID}` method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta cotización?')")
-                                            input(type="hidden" name="_csrf" value=csrfToken)
-                                            button(type="submit" title="Cancelar" class="hover:scale-110 transition-transform")
-                                                img(src="/uploads/cancelar.png" alt="Cancelar" class="w-6 h-6 mx-auto")
-                                    else
-                                        // Icono deshabilitado si no está pendiente
-                                        img(src="/uploads/cancelar.png" alt="Cancelar" class="w-6 h-6 opacity-30 mx-auto grayscale cursor-not-allowed")
+                                //- td(class='px-6 py-4 whitespace-nowrap text-center')
+                                //-     if cot.ESTATUS === 'PENDIENTE'
+                                //-         form(action=`/cotizacion/cancelar/${cot.COTIZACION_ID}` method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta cotización?')")
+                                //-             input(type="hidden" name="_csrf" value=csrfToken)
+                                //-             button(type="submit" title="Cancelar" class="hover:scale-110 transition-transform")
+                                //-                 img(src="/uploads/cancelar.png" alt="Cancelar" class="w-6 h-6 mx-auto")
+                                //-     else
+                                //-         // Icono deshabilitado si no está pendiente
+                                //-         img(src="/uploads/cancelar.png" alt="Cancelar" class="w-6 h-6 opacity-30 mx-auto grayscale cursor-not-allowed")
 
                                 //- 7. Columna CREAR PEDIDO
 
