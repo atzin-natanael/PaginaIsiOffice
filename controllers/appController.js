@@ -1188,6 +1188,7 @@ const pedidoCrear = async (req, res) =>{
             body: JSON.stringify(data)
         });
         if(respuesta.ok){
+
             console.log('pedido creado con exito');
             const cerrar = await fetch(`${process.env.API_URL}/cotizaciones/cerrar/${id}`, {
             method: 'POST',
@@ -1202,6 +1203,33 @@ const pedidoCrear = async (req, res) =>{
             }else{
                 console.error('Error al cerrar cotización:', cerrar.statusText);
             }
+
+            //enviar correo de confirmacion
+            const transport = nodemailer.createTransport({
+            host: process.env.EMAIL_HOST,
+            port: process.env.EMAIL_PORT,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            },
+            tls: {
+                // Esta línea permite conectar aunque el certificado no se pueda verificar
+                rejectUnauthorized: false 
+            }
+         });
+            await transport.sendMail({
+            from: '"IsiOffice" <no-reply@isioffice.com>',
+            to: 'mgutierrez@isioffice.com',
+            subject: `Pedido ${id}`,
+            html: `
+                <div style="font-family: sans-serif; color: #333;">
+                    <p>Estimada Vendedora Marisol Gutierrez,</p>
+                    <p>Se ha creado un nuevo pedido con el número ${id}, desde la página web.</p>
+                    <p>Atentamente,<br><b>Equipo IsiOffice</b></p>
+                </div>
+            `
+        })
 
         } else 
             {
