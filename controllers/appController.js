@@ -815,7 +815,8 @@ const verPedido = async (req, res) => {
             pagina: 'Ver Pedido',
             pedido: partidasConCalculos,
             totalCot: totalCot.toFixed(2), // Redondeamos solo al final para la vista
-            id: id
+            id: id,
+            usuario: req.usuario
         });
 
     } catch (error) {

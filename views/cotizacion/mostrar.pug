@@ -1,7 +1,7 @@
 extends ../layout/index
 
 block contenido
-    //pre=JSON.stringify(cliente, null, 2)
+    //pre=JSON.stringify(usuario, null, 2)
     h2(class='text-3xl font-extrabold text-center mb-10')= pagina
     div(class="flex flex-wrap gap-4 justify-center")
         - const activeClass = "shadow-md brightness-110 transform scale-105"
@@ -22,9 +22,9 @@ block contenido
                         tr
                             th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') ID 
                             th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Fecha Creación / Vencimiento
-                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Cliente
-                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Total
-                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Estatus
+                            th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-widest') Cliente
+                            th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Total
+                            th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Estatus
                             th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Descargar
                             th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Enviar a mi correo
                             th(class='px-6 py-3 text-center text-xs font-bold uppercase tracking-wider') Editar
@@ -89,7 +89,7 @@ block contenido
                                 //-         img(src="/uploads/cancelar.png" alt="Cancelar" class="w-6 h-6 opacity-30 mx-auto grayscale cursor-not-allowed")
 
                                 //- 7. Columna CREAR PEDIDO
-                                
+
                                 td(class='px-6 py-4 whitespace-nowrap text-right')
                                     form(action=`/cotizacion/datos/${cot.COTIZACION_ID}` method="POST")
                                         input(type="hidden" name="_csrf" value=csrfToken)
