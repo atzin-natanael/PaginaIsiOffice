@@ -46,10 +46,11 @@ block contenido
             
             //- COLUMNA IZQUIERDA: Listado (7 de 12)
             div(class="lg:col-span-7")
-                h3.text-xl.font-bold.mb-4 Listado de Productos
+                div(class="bg-white p-4 rounded-lg shadow-xl border-t-4 border-red-600 w-full")
+                    h3.text-xl.font-bold.mb-4 Listado de Productos
                 div
                     table.min-w-full.bg-white.shadow-md.rounded-lg
-                        thead.bg-gray-800.text-white
+                        thead.bg-gray-600.text-white
                             tr
                                 th.p-3.text-left
                                     a(href=`?sort=CLAVE_ARTICULO&order=${sort === 'CLAVE_ARTICULO' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Clave
@@ -98,7 +99,7 @@ block contenido
                                             )
                                             button(
                                                 type="submit"
-                                                class="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white p-2 rounded transition-transform active:scale-95 shadow-sm"
+                                                class="flex flex-shrink-0 w-10 h-10 items-center justify-center bg-green-600 hover:bg-green-700 text-white p-2 rounded transition-transform active:scale-95 shadow-sm"
                                                 title="Agregar a la cotización"
                                             )
                                                 img(src="/uploads/add.png" class="h-4 w-4 invert")
