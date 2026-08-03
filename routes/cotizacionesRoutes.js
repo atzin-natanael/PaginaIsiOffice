@@ -16,7 +16,8 @@ import {
   verCotizacion,
   enviarPdf,
   datosCotizacion,
-  verPdf
+  verPdf,
+  actualizarCantidadCotizacion
 } from '../controllers/appController.js'
 import {protegerRuta, protegerRutaCliente} from '../middlewares/protegerRuta.js'
 import protegerApi from '../middlewares/protegerApi.js'
@@ -31,6 +32,7 @@ router.post('/editar/:id/agregar', protegerRuta, verifyCsrfToken, editarArticulo
 router.get('/vaciar-carrito', vaciarCarritoSesion)
 router.get('/mostrar/:id', protegerRuta, protegerRutaCliente, verifyCsrfToken, mostrarCotizaciones)
 router.get('/editar/:id', protegerRuta, editarCotizaciones)
+router.post('/actualizar-cantidad', protegerRuta, verifyCsrfToken, actualizarCantidadCotizacion)
 router.get('/enviar/:id', protegerRuta, enviarPdf)
 router.get('/pdf/:id', protegerRuta, verPdf)
 

@@ -500,6 +500,29 @@ const editarCotizaciones = async (req, res) => {
         res.redirect('/cotizaciones');
     }
 }
+//EDITAR A LA COTIZACION DESDE EL MENU
+const actualizarCantidadCotizacion = (req, res) => {
+    const { articuloId, cantidad } = req.body;
+    const nuevaCantidad = parseInt(cantidad, 10);
+    console.log('Actualizar cantidad ART_ID:', articuloId, 'Nueva cantidad:', nuevaCantidad);
+    // 1. Validar que exista la sesión de la cotización
+    if (req.session.cotizacionEditar) {
+        // 2. Buscar y actualizar el producto específico
+        req.session.cotizacionEditar = req.session.cotizacionEditar.map(item => {
+            if (item.ART_ID == articuloId) {
+                return {
+                    ...item,
+                    CANTIDAD: nuevaCantidad > 0 ? nuevaCantidad : 1
+                };
+            }
+            return item;
+        });
+    }
+
+    // 3. Redireccionar de vuelta a la vista de edición (para que recalcule todo tu render de editarCotizaciones)
+    // O si usas AJAX/Fetch, puedes responder con res.json({ ok: true })
+    res.redirect('/cotizacion/crear'); 
+};
 // Ejemplo de controlador para eliminar del "carrito" en sesión
 const eliminarArticuloSesionEditar = async(req, res) => {
     console.log('BODY:', req.body);
@@ -1282,6 +1305,7 @@ export {
     pedidoCrear,
     mostrarPedidos,
     verPedido,
-    verPdf
+    verPdf,
+    actualizarCantidadCotizacion
     //agregarEditandoArticuloACotizacion
 }
