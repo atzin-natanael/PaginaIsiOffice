@@ -189,7 +189,7 @@ block contenido
                                             data-PRECIO=item.PRECIO)
                                             td.py-3= item.CLAVE_ARTICULO
                                             //- Truncar nombre si es muy largo
-                                            td.py-3.font-medium.leading-tight(class="max-w-[120px] truncate")= item.NOMBRE
+                                            td.py-3.font-medium.leading-tight(class="max-w-[120px] whitespace-normal")= item.NOMBRE
                                             td.py-3(class= item.EXISTENCIA < item.CANTIDAD ? "text-red-600 text-right" : "text-green-600 text-right")= item.EXISTENCIA
                                             //- PRECIO Original (Tachado para que se note el descuento)
                                             td.py-3.text-right.text-blue-600 $#{item.PRECIO_DESCUENTO}
