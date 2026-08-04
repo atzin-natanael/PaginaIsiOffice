@@ -3,7 +3,7 @@ import {Usuario} from '../models/index.js'
 const protegerRuta =async(req, res, next)=>{
     //Verificar si hay token
     const {_token} = req.cookies
-    console.log('Token en protegerRuta:', _token);
+    //console.log('Token en protegerRuta:', _token);
     if(!_token){
         return res.redirect('/auth/login')
     }
@@ -12,7 +12,7 @@ const protegerRuta =async(req, res, next)=>{
         const decoded = jwt.verify(_token, process.env.JWT_SECRET)
         const usuario = await Usuario.scope('eliminarPassword').findByPk(decoded.id)
         //almacenar usuario al request
-        console.log('Usuario encontrado en protegerRuta:', usuario);
+        //console.log('Usuario encontrado en protegerRuta:', usuario);
         if(usuario){
             req.usuario = usuario
             res.locals.usuario = usuario
@@ -31,7 +31,7 @@ const protegerRutaCliente =async(req, res, next)=>{
     const {_token} = req.cookies
     const {id} = req.params
     console.log('parametros en protegerRutaCliente:', req.params);
-    console.log('Token en protegerRuta:', _token);
+    //console.log('Token en protegerRuta:', _token);
     if(!_token){
         return res.redirect('/auth/login')
     }
@@ -40,7 +40,7 @@ const protegerRutaCliente =async(req, res, next)=>{
         const decoded = jwt.verify(_token, process.env.JWT_SECRET)
         const usuario = await Usuario.scope('eliminarPassword').findByPk(decoded.id)
         //almacenar usuario al request
-        console.log('Usuario encontrado en protegerRuta:', usuario);
+        //console.log('Usuario encontrado en protegerRuta:', usuario);
         if(usuario){
             req.usuario = usuario
             res.locals.usuario = usuario

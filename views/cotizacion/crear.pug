@@ -198,7 +198,7 @@ block contenido
                                             //-td.py-3.text-right.text-blue-600 -#{item.porcentaje_descuento}%
                                             
                                             td.py-3.text-center
-                                                form(action="/cotizacion/actualizar-cantidad" method="POST")
+                                                form(action="/cotizacion/actualizar-cantidad" method="POST" class="form-actualizar-cantidad")
                                                     input(type="hidden" name="_csrf" value=csrfToken)
                                                     input(type="hidden" name="articuloId" value=item.ART_ID)
                                                     input(
@@ -207,9 +207,7 @@ block contenido
                                                         min="1"
                                                         max= item.EXISTENCIA
                                                         value= item.CANTIDAD
-                                                        onchange="this.form.submit()"
-                                                        onkeydown="return false"
-                                                        class="w-16 border rounded text-center p-1"
+                                                        class="input-cantidad w-16 border rounded text-center p-1"
                                                     )
                                                 //span.px-2.py-1.bg-gray-100.rounded.border= item.CANTIDAD
                                                 //input.CANTIDAD(type="hidden" value=item.CANTIDAD)
@@ -234,3 +232,6 @@ block contenido
                     else
                         div.py-10.text-center
                             p.text-gray-500 No hay productos agregados
+
+block scripts
+    script(src="/src/js/updater.js")

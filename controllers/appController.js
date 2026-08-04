@@ -79,7 +79,7 @@ const crearCotizacion = async (req, res) => {
     let { pagina = 1, termino = '', sort = 'CLAVE_ARTICULO', order = 'ASC', categoria = '' } = req.query;
     const {CLIENTE_ID} = req.usuario; // Asegúrate de que el cliente esté almacenado en la sesión
     termino = termino.toUpperCase();
-    console.log('categoria:', categoria);
+    //console.log('categoria:', categoria);
     if (!pagina || !/^[1-9]\d*$/.test(pagina)) {
         return res.redirect(`/cotizacion/crear?pagina=1&termino=${termino}`);
     }
@@ -95,7 +95,7 @@ const crearCotizacion = async (req, res) => {
         let carritoSesion = req.session.cotizacionNueva || [];
 
         const porcentajeDesc = Number(descuento.DESCUENTO) / 100;
-        console.log('carrito', carritoSesion)
+        //console.log('carrito', carritoSesion)
         // Mapeamos el carrito para actualizar existencia y precio con los "datos" frescos de la API
         carritoSesion = carritoSesion.map(item => {
     // 1. Datos base
@@ -205,11 +205,11 @@ const crearCotizacion = async (req, res) => {
 };
 const agregarArticuloACotizacion = async (req, res) => {
     const { articuloId, CANTIDAD, termino } = req.body; // Asegúrate de que el cliente esté almacenado en la sesión
-    console.log('**********************Agregar ART_ID:', req.body, 'Cantidad:', CANTIDAD, 'Término:', termino);
+    //console.log('**********************Agregar ART_ID:', req.body, 'Cantidad:', CANTIDAD, 'Término:', termino);
     const clienteId = req.usuario.CLIENTE_ID; // Asegúrate de que el cliente esté almacenado en la sesión
     const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: clienteId } });    
     const articuloAct = await fetch(`${process.env.API_URL}/codigos/${articuloId}`).then(res => res.json()).then(data => data[0]);
-    console.log("Artículo actual:", articuloAct);
+    //console.log("Artículo actual:", articuloAct);
     console.log("Descuento encontrado:", descuento.DESCUENTO);
     if (!req.session.cotizacionNueva) {
         req.session.cotizacionNueva = [];
@@ -233,7 +233,7 @@ const agregarArticuloACotizacion = async (req, res) => {
     const porcentajeDesc = Number(descuento.DESCUENTO) / 100;
     const impuesto = Number(articulo.IMPUESTO) / 100;
     const precio = precioBase * (1 - porcentajeDesc) * (1 + impuesto);
-    console.log("Agrega nuevo articulo con precio descontado:", precio);
+    //console.log("Agrega nuevo articulo con precio descontado:", precio);
 
     if (existente) {
         existente.CANTIDAD += Number(CANTIDAD);
@@ -249,7 +249,7 @@ const agregarArticuloACotizacion = async (req, res) => {
             EXISTENCIA: Number(articulo.EXISTENCIA_A) + Number(articulo.EXISTENCIA_T)
         });
     }
-    console.log('Término:', req.query);
+    //console.log('Término:', req.query);
     if(termino)
         res.redirect('/cotizacion/crear?termino='+ termino);
     else        
@@ -504,11 +504,12 @@ const editarCotizaciones = async (req, res) => {
 const actualizarCantidadCotizacion = (req, res) => {
     const { articuloId, cantidad } = req.body;
     const nuevaCantidad = parseInt(cantidad, 10);
+    
     console.log('Actualizar cantidad ART_ID:', articuloId, 'Nueva cantidad:', nuevaCantidad);
-    // 1. Validar que exista la sesión de la cotización
-    if (req.session.cotizacionEditar) {
-        // 2. Buscar y actualizar el producto específico
-        req.session.cotizacionEditar = req.session.cotizacionEditar.map(item => {
+
+    // Apuntamos a 'cotizacionNueva' que es donde agregaste los productos
+    if (req.session.cotizacionNueva) {
+        req.session.cotizacionNueva = req.session.cotizacionNueva.map(item => {
             if (item.ART_ID == articuloId) {
                 return {
                     ...item,
@@ -518,10 +519,8 @@ const actualizarCantidadCotizacion = (req, res) => {
             return item;
         });
     }
-
-    // 3. Redireccionar de vuelta a la vista de edición (para que recalcule todo tu render de editarCotizaciones)
-    // O si usas AJAX/Fetch, puedes responder con res.json({ ok: true })
-    res.redirect('/cotizacion/crear'); 
+    res.redirect('/cotizacion/crear');
+    
 };
 // Ejemplo de controlador para eliminar del "carrito" en sesión
 const eliminarArticuloSesionEditar = async(req, res) => {
