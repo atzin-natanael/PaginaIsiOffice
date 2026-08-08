@@ -544,6 +544,10 @@ video {
 .sticky {
   position: sticky;
 }
+.inset-y-0 {
+  top: 0px;
+  bottom: 0px;
+}
 .right-full {
   right: 100%;
 }
@@ -552,6 +556,9 @@ video {
 }
 .top-5 {
   top: 1.25rem;
+}
+.right-0 {
+  right: 0px;
 }
 .z-0 {
   z-index: 0;
@@ -1135,6 +1142,12 @@ video {
 }
 .pt-8 {
   padding-top: 2rem;
+}
+.pr-10 {
+  padding-right: 2.5rem;
+}
+.pr-3 {
+  padding-right: 0.75rem;
 }
 .text-left {
   text-align: left;

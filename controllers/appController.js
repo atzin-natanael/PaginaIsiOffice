@@ -879,7 +879,10 @@ const verPdf = async (req, res) => {
             width: logoDims.width,
             height: logoDims.height,
         });
-        page.drawText(`Fecha: ${id}`, { x: 50, y: yPosition, size: 20, font: fontBold });
+        const respDetalle1 = await fetch(`${process.env.API_URL}/cotizaciones/edit/${id}`);
+        const datosCot = await respDetalle1.json();
+        console.log('datos para pdf', datosCot)
+        page.drawText(`Fecha: ${datosCot[0].createdAt.substring(0,10)}`, { x: 50, y: yPosition, size: 12, font: fontRegular });
 
 
         // Ajustar yPosition para que el texto no se encime con el logo
