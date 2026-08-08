@@ -849,7 +849,7 @@ const verPedido = async (req, res) => {
 const verPdf = async (req, res) => {
     const {id} = req.params;
     const {EMAIL, NOMBRE} = req.usuario;
-    console.log('mail', EMAIL)
+    //console.log('mail', EMAIL)
     try{
         const pdfDoc = await PDFDocument.create()
     
@@ -879,6 +879,8 @@ const verPdf = async (req, res) => {
             width: logoDims.width,
             height: logoDims.height,
         });
+        page.drawText(`Fecha: ${id}`, { x: 50, y: yPosition, size: 20, font: fontBold });
+
 
         // Ajustar yPosition para que el texto no se encime con el logo
         yPosition -= (logoDims.height + 20);
@@ -890,12 +892,13 @@ const verPdf = async (req, res) => {
 
         const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
         const partidasDB = await respDetalle.json();
-
+        console.log('partidas para pdf', partidasDB)
         // 1. Creamos una variable para acumular el total real de las partidas
         let sumaTotalCalculada = 0;
 
         partidasDB.forEach(item => {
             const nombreCorto = item.NOMBRE.substring(0, 60);
+            const codigo = String(item.CLAVE_ARTICULO);
             
             // Convertimos a número para asegurar que la suma sea correcta
             const importeItem = Number(item.IMPORTE_TOTAL) || 0;
@@ -904,7 +907,8 @@ const verPdf = async (req, res) => {
             const importeSeguro = (Math.floor(importeItem * 100) / 100).toFixed(2);
 
             page.drawText(`${item.CANTIDAD}`, { x: 50, y: yPosition, size: 9, font: fontRegular });
-            page.drawText(nombreCorto, { x: 100, y: yPosition, size: 9, font: fontRegular });
+            page.drawText(codigo, { x: 100, y: yPosition, size: 9, font: fontRegular });
+            page.drawText(nombreCorto, { x: 150, y: yPosition, size: 9, font: fontRegular });
             
             // Dibujamos el valor "forzado" a 2 decimales sin redondear hacia arriba
             page.drawText(`$${importeSeguro}`, { x: 500, y: yPosition, size: 9, font: fontRegular });
@@ -967,12 +971,15 @@ const verPdf = async (req, res) => {
             yPosition -= 12; // Espacio entre líneas del disclaimer
         });
 
-        // Serialize and Send...
-        // Serialize the PDFDocument to bytes (a Uint8Array)
+        //guardar pdf
         const pdfBytes = await pdfDoc.save()
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', `attachment; filename="COT${id}_documento.pdf"`);
+        // return res.send(Buffer.from(pdfBytes));
+        //ver pdf
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="COT${id}_documento.pdf"`);
-        return res.send(Buffer.from(pdfBytes));
+        res.setHeader('Content-Disposition', 'inline; filename=previsualizacion.pdf');
+        res.send(Buffer.from(pdfBytes)); 
     }catch (error) {
         console.error("Error al generar PDF:", error);
         res.status(500).send("Error al generar PDF");
