@@ -33,6 +33,7 @@ block contenido
                             tr
                                 th.p-3.text-left
                                     a(href=`?sort=CLAVE_ARTICULO&order=${sort === 'CLAVE_ARTICULO' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Clave
+                                th.p-3.text-center Ver
 
                                 th.p-3.text-left
                                     a(href=`?sort=NOMBRE&order=${sort === 'NOMBRE' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Nombre
@@ -48,6 +49,19 @@ block contenido
                                 tr.border-b.hover_bg-gray-50
                                     // 1. Identificador
                                     td.p-3.font-medium.text-gray-700= codigo.CLAVE_ARTICULO
+                                    td.p-3.text-center
+                                        button(
+                                            type="button"
+                                            class="btn-preview p-1.5 rounded-full hover:bg-gray-200 text-gray-500 hover:text-red-600 transition-colors"
+                                            data-nombre=codigo.NOMBRE
+                                            data-caja=codigo.CONTENIDO_CAJA
+                                            data-img=`/uploads/productos/${codigo.CLAVE_ARTICULO}_1.webp`
+                                        )
+                                            stroke
+                                            svg.w-5.h-5(fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                                                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z")
+                                                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z")
+        
                                     
                                     // 2. Descripción (ancho flexible)
                                     td.p-3.text-sm.text-gray-600= codigo.NOMBRE
@@ -162,12 +176,21 @@ block contenido
                                             //- Precio Original (Tachado para que se note el descuento)
                                             td.py-3.text-right.text-blue-600 $#{item.PRECIO_DESCUENTO}
                                             
-                                            //- Porcentaje de descuento
-                                            //-td.py-3.text-right.text-blue-600 -#{item.porcentaje_descuento}%
-                                            
                                             td.py-3.text-center
-                                                span.px-2.py-1.bg-gray-100.rounded.border= item.CANTIDAD
-                                                input.CANTIDAD(type="hidden" value=item.CANTIDAD)
+                                                form(action="/cotizacion/actualizar-cantidad" method="POST" class="form-actualizar-cantidad")
+                                                    input(type="hidden" name="_csrf" value=csrfToken)
+                                                    input(type="hidden" name="articuloId" value=item.ART_ID)
+                                                    input(
+                                                        type="number"
+                                                        name="cantidad"
+                                                        autocomplete="off"
+                                                        min="1"
+                                                        max= item.EXISTENCIA
+                                                        value= item.CANTIDAD
+                                                        class="input-cantidad w-16 border rounded text-center p-1"
+                                                    )
+                                                //span.px-2.py-1.bg-gray-100.rounded.border= item.CANTIDAD
+                                                //input.CANTIDAD(type="hidden" value=item.CANTIDAD)
                                             //- Precio Final (El que paga)
                                             td.py-3.text-right.font-bold.text-red-600 $#{item.IMPORTE_TOTAL}
                                             
@@ -191,3 +214,22 @@ block contenido
                     else
                         div.py-10.text-center
                             p.text-gray-500 No hay productos agregados
+
+    div#previewModal(class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4")
+        div.bg-white.rounded-2xl.shadow-2xl.max-w-sm.w-full.p-5.relative.animate-fade-in
+            button#closePreview(class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 p-1 rounded-full")
+                svg.w-6.h-6(fill="none" stroke="currentColor" viewBox="0 0 24 24")
+                    path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12")
+            
+            //- Contenedor de la Imagen
+            div.w-full.h-48.bg-gray-100.rounded-xl.mb-4.overflow-hidden.flex.items-center.justify-center
+                img#previewImg(src="" alt="Producto" class="max-h-full max-w-full object-contain p-2" loading="lazy")
+                div#imgLoader(class="hidden text-gray-400 text-xs") Cargando imagen...
+                
+            h4#previewTitle.font-bold.text-gray-800.text-base.mb-2
+            div.text-sm.text-gray-600.bg-gray-50.p-2.rounded-lg
+                span.font-semibold Contenido de la caja: 
+                span#previewCaja 
+                span.font-bold.ml-1 Piezas
+block scripts
+    script(src="/src/js/updater.js")
