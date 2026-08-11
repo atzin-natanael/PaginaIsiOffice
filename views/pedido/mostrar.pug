@@ -14,6 +14,7 @@ block contenido
                             th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Total
                             th(class='px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider') Estatus
                             th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Ver
+                            th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Copiar Pedido a Cotización
                             //th(class='px-6 py-3 text-center text-xs font-bold  uppercase tracking-wider') Enviar a mi correo
                     tbody(class='bg-white divide-y divide-gray-200')
                         each ped in pedidos
@@ -46,6 +47,9 @@ block contenido
                                 td(class='px-6 py-4 whitespace-nowrap text-center')
                                     a(href=`/pedido/ver/${ped.PEDIDO_ID}` title="ver")
                                         img(src="/uploads/ver.png" alt="Ver" class='w-6 h-6 hover:scale-110 transition-transform mx-auto')
+                                td(class='px-6 py-4 whitespace-nowrap text-center')
+                                    a(href=`/pedido/copiar/${ped.PEDIDO_ID}` title="Copiar")
+                                        img(src="/uploads/copiar.png" alt="Copiar" class='w-6 h-6 hover:scale-110 transition-transform mx-auto')
                                 
                                 //- td(class='px-6 py-4 whitespace-nowrap text-center')
                                 //-     a(href=`/pedido/enviar/${ped.PEDIDO_ID}` title="Enviar" class=`inline-block ${ped.ESTATUS !== 'PENDIENTE' ? 'pointer-events-none cursor-not-allowed' : '' }`)
