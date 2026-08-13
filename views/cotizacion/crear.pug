@@ -89,7 +89,7 @@ block contenido
                                     
                                     // 3. Stock (Alineado al centro para que no se pierda)
                                     td.p-3.text-center.text-base
-                                        span(class=codigo.TOTAL_EXISTENCIA > 0 ? 'text-green-600' : 'text-red-600')
+                                        span(class=[ "font-medium", codigo.TOTAL_EXISTENCIA > 0 ? 'text-green-600' : 'text-red-600'])
                                             | #{codigo.TOTAL_EXISTENCIA}
                                     
                                     // 4. PRECIO (Alineado a la derecha suele verse mejor con dinero)
@@ -109,14 +109,14 @@ block contenido
                                                 max= codigo.TOTAL_EXISTENCIA
                                                 value="1"
                                                 onkeydown="return false"
-                                                class="w-16 border rounded text-center p-1 focus:ring-2 focus:ring-green-500 outline-none"
+                                                class="w-16 border rounded text-center p-1 focus:ring-2 focus:ring-green-500 outline-none font-base"
                                             )
                                             button(
                                                 type="submit"
-                                                class="flex flex-shrink-0 w-10 h-10 items-center justify-center bg-green-600 hover:bg-green-700 text-white p-2 rounded transition-transform active:scale-95 shadow-sm"
+                                                class="flex flex-shrink-0 w-11 h-10 items-center justify-center bg-green-600 hover:bg-green-700 text-white p-2 rounded transition-transform active:scale-95 shadow-sm"
                                                 title="Agregar a la cotización"
                                             )
-                                                img(src="/uploads/add.png" class="h-4 w-4 invert")
+                                                img(src="/uploads/add.png" class="h-6 w-6 invert")
                                             //- Este es el recuadro que se expande al hacer hover
                                         div(class="hidden group-hover:block absolute z-[100] right-full top-0 mr-4 w-72 bg-white shadow-2xl border border-gray-200 p-4 rounded-xl pointer-events-none")
                                             h4(class="font-bold text-sm mb-2 text-gray-800 border-b pb-1")= codigo.NOMBRE 
@@ -189,7 +189,7 @@ block contenido
                                 thead.text-gray-500.border-b.uppercase
                                     tr
                                         th.py-2.text-left Clave
-                                        th.py-2.text-left Nombre
+                                        th(class="py-2 text-left pl-3 xl:pl-0") Nombre
                                         th.py-2.text-right Stock
                                         th.py-2.text-right Precio
                                         th.py-2.text-center Cant.
@@ -201,12 +201,12 @@ block contenido
                                             data-art-id=item.ART_ID 
                                             data-clave=item.CLAVE_ARTICULO 
                                             data-PRECIO=item.PRECIO)
-                                            td.py-3= item.CLAVE_ARTICULO
+                                            td.py-3.text-sm.font-bold= item.CLAVE_ARTICULO
                                             //- Truncar nombre si es muy largo
-                                            td.py-3.font-medium.leading-tight(class="max-w-[120px] whitespace-normal")= item.NOMBRE
-                                            td.py-3(class= item.EXISTENCIA < item.CANTIDAD ? "text-red-600 text-right" : "text-green-600 text-right")= item.EXISTENCIA
+                                            td(class="py-3 font-medium leading-tight text-xs xl:text-sm max-w-[120px] whitespace-normal pl-3 xl:pl-0")= item.NOMBRE
+                                            td(class=[ "py-3 font-medium text-xs lg:text-sm", item.EXISTENCIA < item.CANTIDAD ? "text-red-600 text-right" : "text-green-600 text-right"])= item.EXISTENCIA
                                             //- PRECIO Original (Tachado para que se note el descuento)
-                                            td.py-3.text-right.text-blue-600 $#{item.PRECIO_DESCUENTO}
+                                            td.py-3.text-right.text-blue-600.text-sm.font-medium $#{item.PRECIO_DESCUENTO}
                                             
                                             //- Porcentaje de descuento
                                             //-td.py-3.text-right.text-blue-600 -#{item.porcentaje_descuento}%
@@ -222,12 +222,12 @@ block contenido
                                                         min="1"
                                                         max= item.EXISTENCIA
                                                         value= item.CANTIDAD
-                                                        class="input-cantidad w-16 border rounded text-center p-1"
+                                                        class="input-cantidad w-16 border rounded text-center p-1 text-sm font-semibold"
                                                     )
                                                 //span.px-2.py-1.bg-gray-100.rounded.border= item.CANTIDAD
                                                 //input.CANTIDAD(type="hidden" value=item.CANTIDAD)
                                             //- PRECIO Final (El que paga)
-                                            td.py-3.text-right.font-bold.text-red-600 $#{item.IMPORTE_TOTAL}
+                                            td.py-3.text-right.font-bold.text-green-600.text-sm $#{item.IMPORTE_TOTAL}
                                             
                                             td.py-3.text-right
                                                 form(action="/cotizacion/eliminar-producto" method="POST")
@@ -240,7 +240,7 @@ block contenido
                         div.mt-4.pt-4.border-t
                             div.flex.justify-between.items-center
                                 span.text-gray-600 Total:
-                                span.text-xl.font-black.text-red-600 $#{totalCot}
+                                span.text-2xl.font-black.text-green-600 $#{totalCot}
                             form(action="/cotizacion/guardar" method="POST")
                                 input(type="hidden" name="_csrf" value=csrfToken)
                                 button(type="submit" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md uppercase text-sm") Guardar Cotización
