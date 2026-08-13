@@ -1,5 +1,5 @@
 header.bg-slate-300.border-b.border-stone-900.py-3.shadow-sm
-    .container.mx-auto.flex.justify-between.items-center.px-4
+    .w-full.flex.justify-between.items-center.px-4
         //- Lado Izquierdo: Logo y Bienvenida
         //pre=JSON.stringify(usuario)   
         .flex.items-center.gap-6
@@ -9,11 +9,11 @@ header.bg-slate-300.border-b.border-stone-900.py-3.shadow-sm
                 .hidden(class="md:block border-l border-gray-300 h-10 ml-2")
                 div(class="hidden md:block")
                     p.text-xs.text-gray-500.font-semibold.uppercase.tracking-wider Bienvenido
-                    p.text-sm.font-bold.text-slate-800= usuario.NOMBRE
+                    p(class="text-xs md:text-sm lg:text-base font-bold text-slate-800")= usuario.NOMBRE
 
         //- Lado Derecho: Navegación
-        nav(class="hidden lg:flex items-center gap-2")
-            - const linkClass = "px-4 py-2 rounded-md text-sm font-bold transition-all duration-200 shadow-sm"
+        nav(class="ml-auto hidden md:flex items-center gap-2 text-center text-xs md:text-sm xl:text-base font-semibold")
+            - const linkClass = "px-4 py-2 rounded-md font-bold transition-all duration-200 shadow-sm"
         
             if usuario
                 //- Agregamos 'border' a la condición de activo
@@ -34,4 +34,4 @@ header.bg-slate-300.border-b.border-stone-900.py-3.shadow-sm
 
             form(action="/auth/cerrar-sesion" method="POST" class="ml-2")
                 input(type="hidden" name="_csrf" value=csrfToken)
-                button(type="submit" class="bg-gray-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-xs font-bold uppercase tracking-tight transition-all shadow-sm") Cerrar Sesión
+                button(type="submit" class="bg-gray-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-xs md:text-sm xl:text-base font-bold tracking-tight transition-all shadow-sm") Cerrar Sesión

@@ -85,15 +85,15 @@ block contenido
                                                 path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z")
                                                 path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z")
                                     // 2. Descripción (ancho flexible)
-                                    td.p-3.text-sm.text-gray-600= codigo.NOMBRE
+                                    td.p-3.text-base.text-gray-600= codigo.NOMBRE
                                     
                                     // 3. Stock (Alineado al centro para que no se pierda)
-                                    td.p-3.text-center
+                                    td.p-3.text-center.text-base
                                         span(class=codigo.TOTAL_EXISTENCIA > 0 ? 'text-green-600' : 'text-red-600')
                                             | #{codigo.TOTAL_EXISTENCIA}
                                     
                                     // 4. PRECIO (Alineado a la derecha suele verse mejor con dinero)
-                                    td.p-3.font-bold.text-blue-700 $#{codigo.PRECIO}
+                                    td.p-3.font-bold.text-blue-700.text-base $#{codigo.PRECIO}
                                     
                                     // 5. Acción
                                     td.p-3.text-right.relative.group
