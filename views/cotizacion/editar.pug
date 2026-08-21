@@ -26,22 +26,23 @@ block contenido
             
             //- COLUMNA IZQUIERDA: Listado (7 de 12)
             div(class="lg:col-span-7")
-                h3.text-xl.font-bold.mb-4 Listado de Productos
-                div.overflow-x-auto
+                div(class="bg-white p-4 rounded-lg shadow-xl border-t-4 border-red-600 min-w-full")
+                    h3.text-xl.font-bold.mb-4 Listado de Productos
+                div
                     table.min-w-full.bg-white.shadow-md.rounded-lg
-                        thead.bg-gray-800.text-white
+                        thead.bg-gray-600.text-white
                             tr
                                 th.p-3.text-left
                                     a(href=`?sort=CLAVE_ARTICULO&order=${sort === 'CLAVE_ARTICULO' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Clave
-                                th.p-3.text-center Ver
-
+                                th.p-3.text-center
+                                    a(href=`?sort=CLAVE_ARTICULO&order=${sort === 'CLAVE_ARTICULO' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Ver
                                 th.p-3.text-left
                                     a(href=`?sort=NOMBRE&order=${sort === 'NOMBRE' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Nombre
 
                                 th.p-3.text-left
                                     a(href=`?sort=TOTAL_EXISTENCIA&order=${sort === 'TOTAL_EXISTENCIA' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Existencia
                                 th.p-3.text-left
-                                    a(href=`?sort=precioNeto&order=${sort === 'precioNeto' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") Precio
+                                    a(href=`?sort=PrecioNeto&order=${sort === 'PrecioNeto' && order === 'ASC' ? 'DESC' : 'ASC'}` class="hover:underline") PRECIO
 
                                 th.p-3.text-center Acciones
                         tbody
@@ -49,6 +50,8 @@ block contenido
                                 tr.border-b.hover_bg-gray-50
                                     // 1. Identificador
                                     td.p-3.font-medium.text-gray-700= codigo.CLAVE_ARTICULO
+                                    
+                                    //- Opcion 1: Botón de vista previa con atributo data-img
                                     td.p-3.text-center
                                         button(
                                             type="button"
@@ -61,25 +64,24 @@ block contenido
                                             svg.w-5.h-5(fill="none" stroke="currentColor" viewBox="0 0 24 24")
                                                 path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z")
                                                 path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z")
-        
-                                    
                                     // 2. Descripción (ancho flexible)
-                                    td.p-3.text-sm.text-gray-600= codigo.NOMBRE
+                                    td.p-3.text-base.text-gray-600= codigo.NOMBRE
                                     
                                     // 3. Stock (Alineado al centro para que no se pierda)
-                                    td.p-3.text-center
-                                        span(class=codigo.TOTAL_EXISTENCIA > 0 ? 'text-green-600' : 'text-red-600')
+                                    td.p-3.text-center.text-base
+                                        span(class=[ "font-medium", codigo.TOTAL_EXISTENCIA > 0 ? 'text-green-600' : 'text-red-600'])
                                             | #{codigo.TOTAL_EXISTENCIA}
                                     
-                                    // 4. Precio (Alineado a la derecha suele verse mejor con dinero)
-                                    td.p-3.font-bold.text-blue-700 $#{codigo.precioNeto}
+                                    // 4. PRECIO (Alineado a la derecha suele verse mejor con dinero)
+                                    td.p-3.font-bold.text-blue-700.text-base $#{codigo.PRECIO}
                                     
                                     // 5. Acción
-                                    td.p-3.text-right
-                                        form(action=`/cotizacion/editar/${id}/agregar` method="POST" class="flex items-center justify-end gap-2")
+                                    td.p-3.text-right.relative.group
+                                        form(action="/cotizacion/agregar" method="POST" class="flex items-center justify-end gap-2")
                                             input(type="hidden" name="_csrf" value=csrfToken)
-                                            input(type="hidden" name="cotizacionId" value=id)
                                             input(type="hidden" name="articuloId" value=codigo.ART_ID)
+                                            if(termino)
+                                                input(type="hidden" name="termino" value=termino)
                                             input(
                                                 type="number"
                                                 name="CANTIDAD"
@@ -87,14 +89,21 @@ block contenido
                                                 max= codigo.TOTAL_EXISTENCIA
                                                 value="1"
                                                 onkeydown="return false"
-                                                class="w-16 border rounded text-center p-1 focus:ring-2 focus:ring-green-500 outline-none"
+                                                class="w-16 border rounded text-center p-1 focus:ring-2 focus:ring-green-500 outline-none font-base"
                                             )
                                             button(
                                                 type="submit"
-                                                class="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white p-2 rounded transition-transform active:scale-95 shadow-sm"
+                                                class="flex flex-shrink-0 w-11 h-10 items-center justify-center bg-green-600 hover:bg-green-700 text-white p-2 rounded transition-transform active:scale-95 shadow-sm"
                                                 title="Agregar a la cotización"
                                             )
-                                                img(src="/uploads/add.png" class="h-4 w-4 invert")
+                                                img(src="/uploads/add.png" class="h-6 w-6 invert")
+                                            //- Este es el recuadro que se expande al hacer hover
+                                        div(class="hidden group-hover:block absolute z-[100] right-full top-0 mr-4 w-72 bg-white shadow-2xl border border-gray-200 p-4 rounded-xl pointer-events-none")
+                                            h4(class="font-bold text-sm mb-2 text-gray-800 border-b pb-1")= codigo.NOMBRE 
+                                            h4(class="font-bold text-sm mb-2 text-gray-800 border-b pb-1") Contenido de la caja: 
+                                                span(class="text-sm text-gray-600")= codigo.CONTENIDO_CAJA 
+                                                    span(class="font-bold")  Piezas
+
                             else
                                 tr
                                     td.py-10.text-center.text-gray-500(colspan="5") No hay productos disponibles
@@ -157,7 +166,7 @@ block contenido
                                 thead.text-gray-500.border-b.uppercase
                                     tr
                                         th.py-2.text-left Clave
-                                        th.py-2.text-left Nombre
+                                        th(class="py-2 text-left pl-3 xl:pl-0") Nombre
                                         th.py-2.text-right Stock
                                         th.py-2.text-right Precio
                                         th.py-2.text-center Cant.
@@ -169,15 +178,15 @@ block contenido
                                             data-art-id=item.ART_ID 
                                             data-clave=item.CLAVE_ARTICULO 
                                             data-PRECIO=item.PRECIO)
-                                            td.py-3= item.CLAVE_ARTICULO
+                                            td.py-3.text-sm.font-bold= item.CLAVE_ARTICULO
                                             //- Truncar nombre si es muy largo
-                                            td.py-3.font-medium.leading-tight(class="max-w-[120px] truncate")= item.NOMBRE
-                                            td.py-3(class= item.EXISTENCIA < item.CANTIDAD ? "text-red-600 text-right" : "text-green-600 text-right")= item.EXISTENCIA
-                                            //- Precio Original (Tachado para que se note el descuento)
-                                            td.py-3.text-right.text-blue-600 $#{item.PRECIO_DESCUENTO}
+                                            td(class="py-3 font-medium leading-tight text-xs xl:text-sm max-w-[120px] whitespace-normal pl-3 xl:pl-0")= item.NOMBRE
+                                            td(class=[ "py-3 font-medium text-xs lg:text-sm", item.EXISTENCIA < item.CANTIDAD ? "text-red-600 text-right" : "text-green-600 text-right"])= item.EXISTENCIA
+                                            //- PRECIO Original (Tachado para que se note el descuento)
+                                            td.py-3.text-right.text-blue-600.text-sm.font-medium $#{item.PRECIO_DESCUENTO}
                                             
                                             td.py-3.text-center
-                                                form(action="/cotizacion/actualizar-cantidad" method="POST" class="form-actualizar-cantidad")
+                                                form(action="/cotizacion/actualizar-cantidad-editar" method="POST" class="form-actualizar-cantidad")
                                                     input(type="hidden" name="_csrf" value=csrfToken)
                                                     input(type="hidden" name="articuloId" value=item.ART_ID)
                                                     input(
@@ -187,29 +196,29 @@ block contenido
                                                         min="1"
                                                         max= item.EXISTENCIA
                                                         value= item.CANTIDAD
-                                                        class="input-cantidad w-16 border rounded text-center p-1"
+                                                        class="input-cantidad w-16 border rounded text-center p-1 text-sm font-semibold"
                                                     )
                                                 //span.px-2.py-1.bg-gray-100.rounded.border= item.CANTIDAD
                                                 //input.CANTIDAD(type="hidden" value=item.CANTIDAD)
                                             //- Precio Final (El que paga)
                                             td.py-3.text-right.font-bold.text-red-600 $#{item.IMPORTE_TOTAL}
                                             
+                                            td.py-3.text-right.font-bold.text-green-600.text-sm $#{item.IMPORTE_TOTAL}
+                                            
                                             td.py-3.text-right
                                                 form(action="/cotizacion/eliminar-producto-edit" method="POST")
                                                     input(type="hidden" name="_csrf" value=csrfToken)
-                                                    input(type="hidden" name="cotizacionId" value=id)
                                                     input(type="hidden" name="articuloId" value=item.ART_ID)
-                                                    button(type="submit" class="text-red-500 hover:text-red-800 transition-colors")
+                                                    button(type="submit" class="text-gray-500 hover:text-red-800 transition-colors" title="Eliminar de la cotización")
                                                         svg(xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor")
-                                                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12")
+                                                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16")
                     
                         div.mt-4.pt-4.border-t
                             div.flex.justify-between.items-center
                                 span.text-gray-600 Total:
-                                span.text-xl.font-black.text-red-600 $#{totalCot}
-                            form(action="/cotizacion/guardar-edit" method="POST")
+                                span.text-2xl.font-black.text-green-600 $#{totalCot}
+                            form(action="/cotizacion/guardar" method="POST")
                                 input(type="hidden" name="_csrf" value=csrfToken)
-                                input(type="hidden" name="cotizacionId" value=id)
                                 button(type="submit" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md uppercase text-sm") Guardar Cotización
                     else
                         div.py-10.text-center

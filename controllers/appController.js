@@ -522,6 +522,27 @@ const actualizarCantidadCotizacion = (req, res) => {
     res.redirect('/cotizacion/crear');
     
 };
+const actualizarCantidadCotizacionEditar = (req, res) => {
+    const { articuloId, cantidad } = req.body;
+    const nuevaCantidad = parseInt(cantidad, 10);
+    
+    console.log('Actualizar cantidad ART_ID:', articuloId, 'Nueva cantidad:', nuevaCantidad);
+
+    // Apuntamos a 'cotizacionNueva' que es donde agregaste los productos
+    if (req.session.cotizacionEditar) {
+        req.session.cotizacionEditar = req.session.cotizacionEditar.map(item => {
+            if (item.ART_ID == articuloId) {
+                return {
+                    ...item,
+                    CANTIDAD: nuevaCantidad > 0 ? nuevaCantidad : 1
+                };
+            }
+            return item;
+        });
+    }
+    res.redirect('/cotizacion/editar/' + req.session.cotizacionIdActual);
+    
+};
 // Ejemplo de controlador para eliminar del "carrito" en sesión
 const eliminarArticuloSesionEditar = async(req, res) => {
     console.log('BODY:', req.body);
@@ -839,6 +860,113 @@ const verPedido = async (req, res) => {
             totalCot: totalCot.toFixed(2), // Redondeamos solo al final para la vista
             id: id,
             usuario: req.usuario
+        });
+
+    } catch (error) {
+        console.error("Error al cargar edición:", error);
+        res.redirect('/cotizaciones');
+    }
+}
+const copiarPedido = async (req, res) => {
+    const { id } = req.params;
+    const {CLIENTE_ID} = req.usuario;
+    let { pagina = 1, termino = '', sort = 'CLAVE_ARTICULO', order = 'ASC' } = req.query;
+    termino = termino.toUpperCase();
+    const descuento = await DescuentosClientes.findOne({ where: { CLIENTE_ID: CLIENTE_ID } });
+    try {
+        // 1. Catálogo (Siempre se lee de la API para tener stock actualizado)
+        const respCatalogo = await fetch(`${process.env.API_URL}/codigos?pagina=${pagina}&termino=${termino}&sort=${sort}&order=${order}`);
+        let articulosCatalogo = await respCatalogo.json();
+        const arreglo = articulosCatalogo.datos;
+        const porcentajeDesc = Number(descuento.DESCUENTO) / 100;
+
+        const respDetalle = await fetch(`${process.env.API_URL}/cotizaciones/det/${id}`);
+            const partidasDB = await respDetalle.json();
+            //console.log('articulos de la db a editar', partidasDB)
+            // Guardamos en sesión tanto las partidas como el ID que estamos editando
+            req.session.cotizacionNueva = partidasDB;
+            req.session.cotizacionIdActual = id; 
+            console.log('respuesta api cot nueva',partidasDB);
+
+        let partidasAMostrar = req.session.cotizacionNueva;
+        partidasAMostrar = partidasAMostrar.map(item => {
+    // 1. Datos base
+        const enCatalogo = arreglo.find(d => d.ART_ID == item.ART_ID);
+        
+        // 2. Variables numéricas (Fallback a lo que ya hay en sesión si no está en el catálogo visible)
+        const precioBase = Number(enCatalogo ? enCatalogo.PRECIO : (item.PRECIO || 0));
+        // Asumimos que si viene de la DB o API, '16.00' es el porcentaje
+        const tasaImpuesto = Number(enCatalogo ? enCatalogo.IMPUESTO : (item.TASA_IVA || 16)) / 100;
+        const cantidad = Number(item.CANTIDAD || item.cantidad || 0);
+
+        // 3. CÁLCULOS EN PESOS
+        const precioConDescuento = precioBase * (1 - porcentajeDesc);
+        const descuento = (cantidad * precioBase) * (porcentajeDesc);
+        const montoImpuestoPesos = (precioConDescuento * tasaImpuesto) * cantidad; // Valor en dinero
+        const importeTotalFinal = (precioConDescuento * (1 + tasaImpuesto)) * cantidad;
+
+        // 4. Retorno del objeto con IMPUESTO en pesos
+        return {
+            ...item,
+            ART_ID: item.ART_ID,
+            CLAVE_ARTICULO: item.CLAVE_ARTICULO,
+            NOMBRE: item.NOMBRE,
+            PRECIO: precioBase, 
+            CANTIDAD: cantidad,
+            
+            // --- CAMBIOS AQUÍ ---
+            TASA_IVA: (tasaImpuesto * 100).toFixed(2), // Guardamos la tasa por si acaso
+            IMPUESTO: montoImpuestoPesos.toFixed(2),   // <--- VALOR EN PESOS (monto total de IVA)
+            PRECIO_DESCUENTO: precioConDescuento.toFixed(2), 
+            DESCUENTO: descuento.toFixed(2),
+            IMPORTE: (precioBase * cantidad).toFixed(2),
+            IMPORTE_TOTAL: importeTotalFinal.toFixed(2),
+            // --------------------
+            
+            EXISTENCIA: enCatalogo ? (Number(enCatalogo.EXISTENCIA_A) + Number(enCatalogo.EXISTENCIA_T)) : (item.EXISTENCIA || 0)
+        };
+    });
+    console.log('partidas modificados: ', partidasAMostrar);
+    console.log('carrito editando', req.session.cotizacionNueva)
+    // 2. Ahora el reduce funcionará siempre apuntando a las MAYÚSCULAS
+    req.session.cotizacionNueva = partidasAMostrar;
+    
+    const totalCot = partidasAMostrar.reduce((acc, item) => {
+    // Sumamos directamente el IMPORTE_TOTAL que ya calculamos arriba
+    return acc + Number(item.IMPORTE_TOTAL || 0);
+    }, 0);
+        //catalogo
+        const codigosConTotal = arreglo.map(c => {
+            // Convertimos los strings del fetch a números reales
+            const precioBase = parseFloat(c.PRECIO); 
+            const tasaImpuesto = parseFloat(c.IMPUESTO) / 100;
+            
+            // FÓRMULA: (Precio Base - Descuento) + IVA
+            // Es lo mismo que: PrecioBase * (1 - Desc) * (1 + IVA)
+            const precioConDescuento = precioBase * (1 - porcentajeDesc);
+            const precioNeto = precioConDescuento * (1 + tasaImpuesto);
+
+            return {
+                ...c,
+                TOTAL_EXISTENCIA: Number(c.EXISTENCIA_A) + Number(c.EXISTENCIA_T),
+                // Preparamos los valores para la vista
+                precioLista: precioBase.toFixed(2),
+                precioNeto: precioNeto.toFixed(2), // Este es el que el cliente paga
+                ahorro: (precioBase - precioConDescuento).toFixed(2)
+            };
+        });
+        res.render('cotizacion/crear', {
+            pagina: 'Crear Cotización',
+            barra: false,
+            codigos: codigosConTotal,
+            paginas: articulosCatalogo.paginas,
+            paginaActual: articulosCatalogo.pagina,
+            total: articulosCatalogo.total,
+            offset: articulosCatalogo.offset,
+            limit: articulosCatalogo.limit,
+            termino: termino,
+            cotizacion: req.session.cotizacionNueva, // Pasamos el carrito sincronizado
+            totalCot: totalCot.toFixed(2)
         });
 
     } catch (error) {
@@ -1314,7 +1442,9 @@ export {
     pedidoCrear,
     mostrarPedidos,
     verPedido,
+    copiarPedido,
     verPdf,
-    actualizarCantidadCotizacion
+    actualizarCantidadCotizacion,
+    actualizarCantidadCotizacionEditar
     //agregarEditandoArticuloACotizacion
 }
