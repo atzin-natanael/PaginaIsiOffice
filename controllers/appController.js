@@ -549,10 +549,10 @@ const eliminarArticuloSesionEditar = async(req, res) => {
     const { articuloId, cotizacionId } = req.body;
     console.log("Eliminar ART_ID:", articuloId, "de COTIZACION_ID:", cotizacionId);
     // Accedemos a la sesión
-    let cotizacion = req.session.cotizacionNueva || [];
+    let cotizacion = req.session.cotizacionEditar || [];
 
     // Sobreescribimos la sesión filtrando el ID que NO queremos
-    req.session.cotizacionNueva = cotizacion.filter(
+    req.session.cotizacionEditar = cotizacion.filter(
     item => Number(item.ART_ID) !== Number(articuloId)
     );
 
