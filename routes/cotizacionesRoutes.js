@@ -44,9 +44,9 @@ router.post('/datos/:id', protegerRuta,
   body('usoCFDI').notEmpty().withMessage('El uso de CFDI es obligatorio'),
   datosCotizacion)
 router.get('/ver/:id', protegerRuta, verCotizacion)
-router.post('/editar/eliminar-producto', verifyCsrfToken, eliminarArticuloSesionEditar)
+router.post('/editar/:id/eliminar-producto-edit', verifyCsrfToken, eliminarArticuloSesionEditar)
 router.post('/eliminar-producto', verifyCsrfToken, eliminarArticuloSesion)
-router.post('/eliminar-producto-edit', verifyCsrfToken, eliminarArticuloSesionEdit)
+//router.post('/eliminar-producto-edit', verifyCsrfToken, eliminarArticuloSesionEdit)
 //router.get('/exito', protegerRuta, verifyCsrfToken, extito);
 router.post('/cancelar/:id', protegerRuta, verifyCsrfToken, cancelarCotizacion)
 router.post('/guardar', protegerRuta, verifyCsrfToken, guardarCotizacionCompleta)

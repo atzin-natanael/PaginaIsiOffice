@@ -206,7 +206,7 @@ block contenido
                                             td.py-3.text-right.font-bold.text-green-600.text-sm $#{item.IMPORTE_TOTAL}
                                             
                                             td.py-3.text-right
-                                                form(action="/cotizacion/eliminar-producto-edit" method="POST")
+                                                form(action=`/cotizacion/editar/${id}/eliminar-producto-edit` method="POST")
                                                     input(type="hidden" name="_csrf" value=csrfToken)
                                                     input(type="hidden" name="articuloId" value=item.ART_ID)
                                                     button(type="submit" class="text-gray-500 hover:text-red-800 transition-colors" title="Eliminar de la cotización")
@@ -217,7 +217,7 @@ block contenido
                             div.flex.justify-between.items-center
                                 span.text-gray-600 Total:
                                 span.text-2xl.font-black.text-green-600 $#{totalCot}
-                            form(action="/cotizacion/guardar" method="POST")
+                            form(action="/cotizacion/guardar-edit" method="POST")
                                 input(type="hidden" name="_csrf" value=csrfToken)
                                 button(type="submit" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md uppercase text-sm") Guardar Cotización
                     else

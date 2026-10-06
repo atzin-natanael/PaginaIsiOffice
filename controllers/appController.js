@@ -546,7 +546,9 @@ const actualizarCantidadCotizacionEditar = (req, res) => {
 // Ejemplo de controlador para eliminar del "carrito" en sesión
 const eliminarArticuloSesionEditar = async(req, res) => {
     console.log('BODY:', req.body);
-    const { articuloId, cotizacionId } = req.body;
+    const cotizacionId = req.params.id;
+    console.log('cotizacionId:', req.params.id);
+    const { articuloId } = req.body;
     console.log("Eliminar ART_ID:", articuloId, "de COTIZACION_ID:", cotizacionId);
     // Accedemos a la sesión
     let cotizacion = req.session.cotizacionEditar || [];
@@ -582,9 +584,12 @@ const eliminarArticuloSesion = async(req, res) => {
 }
 const eliminarArticuloSesionEdit = async(req, res) => {
     console.log('BODY:', req.body);
-    const { articuloId, cotizacionId } = req.body;
+    console.log('PARAMS:', req.params.id);
+    const {cotizacionId} = req.params;
+    const { articuloId } = req.body;
     console.log("Eliminar ART_ID:", articuloId, "de COTIZACION_ID:", cotizacionId);
     // Accedemos a la sesión
+    console.log('cotizacionEditar antes de eliminar:', req.session.cotizacionEditar);
     let cotizacion = req.session.cotizacionEditar || [];
 
     // Sobreescribimos la sesión filtrando el ID que NO queremos
