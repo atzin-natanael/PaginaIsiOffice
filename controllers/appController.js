@@ -316,8 +316,10 @@ const agregarArticuloACotizacion = async (req, res) => {
 //     }
 // };
 const editarArticuloCotizacion = async (req, res) => {
-    const { articuloId, CANTIDAD, cotizacionId } = req.body;
-    
+    const { articuloId, CANTIDAD} = req.body;
+    const cotizacionId = req.params.id; // Obtenemos el ID de la cotización desde los parámetros de la URL+
+    console.log('req.params ddd:', req.params);
+    console.log('Editar ART_ID:', articuloId, 'Cantidad:', CANTIDAD, 'Cotización ID:', cotizacionId);
     if (!req.session.cotizacionEditar) {
         req.session.cotizacionEditar = [];
     }
@@ -670,60 +672,107 @@ const guardarCotizacionCompleta = async (req, res) => { // <--- Este 'res' es el
     }
 }
 //last problems
-const guardarCotizacionEditando = async (req, res) => { // <--- Este 'res' es el bueno (Express)
-    const {cotizacionId} = req.body;
+const guardarCotizacionEditando = async (req, res) => {
+    const cotizacionId = req.params.id
+
     try {
-        const articulos = req.session.cotizacionEditar;
-        const usuario = req.usuario.CLIENTE_ID; 
+        const articulos = req.session.cotizacionEditar
+        const usuario = req.usuario.CLIENTE_ID
+
         console.log('guardar editando', articulos)
+
         if (!articulos || articulos.length === 0) {
-            return res.redirect('/cotizacion/carrito?error=vacio');
+            return res.redirect('/cotizacion/carrito?error=vacio')
         }
 
         const data = {
-            "CLIENTE_ID": usuario,
-            "COSTO_TOTAL": Number(articulos.reduce((t, a) => t + Number(a.IMPORTE_TOTAL), 0).toFixed(2)),
-            "DESCRIPCION": "Cotización desde la web",
-            "COTIZACION_ID": cotizacionId,
-            "articulos": articulos
-        };
+            CLIENTE_ID: usuario,
 
-        // CAMBIA 'const res' por 'const respuesta'
-        const respuesta = await fetch(`${process.env.API_URL}/cotizacion/guardar-editando`, { 
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
+            COSTO_TOTAL: Number(
+                articulos
+                    .reduce(
+                        (total, articulo) =>
+                            total + Number(articulo.IMPORTE_TOTAL),
+                        0
+                    )
+                    .toFixed(2)
+            ),
 
-        // Ahora usa 'respuesta' para todo lo que sigue
-        const contentType = respuesta.headers.get("content-type"); 
+            DESCRIPCION: 'Cotización desde la web',
+            COTIZACION_ID: cotizacionId,
+            articulos
+        }
 
-        let result;
-        if (contentType && contentType.includes("application/json")) {
-            result = await respuesta.json();
+        const respuesta = await fetch(
+            `${process.env.API_URL}/cotizacion/guardar-editando`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }
+        )
+
+        const contentType = respuesta.headers.get('content-type')
+
+        let result
+
+        if (
+            contentType &&
+            contentType.includes('application/json')
+        ) {
+            result = await respuesta.json()
         } else {
-            const textError = await respuesta.text();
-            throw new Error('Servidor devolvió HTML/Texto.');
+            const textError = await respuesta.text()
+
+            console.error(
+                'Respuesta inesperada de API:',
+                textError
+            )
+
+            throw new Error(
+                'Servidor devolvió HTML o texto.'
+            )
         }
 
-        if (req.session.cotizacionEditar){
-            req.session.cotizacionEditar = [];
-            delete req.session.cotizacionEditar;
+        // MUY IMPORTANTE
+        if (!respuesta.ok) {
+            throw new Error(
+                result?.mensaje ||
+                result?.error ||
+                'Error al actualizar la cotización'
+            )
         }
 
-        // ¡AHORA SÍ! 'res' sigue siendo el objeto original de Express
-        return res.render('cotizacion/exito', {
-            pagina: 'Cotización Actualizada',
-            usuario: req.usuario,
-            mensaje: '¡Tu cotización ha sido editada exitosamente!'
-        });
+        delete req.session.cotizacionEditar
+
+        req.session.save((err) => {
+            if (err) {
+                console.error(
+                    'Error guardando sesión:',
+                    err
+                )
+            }
+
+            return res.render('cotizacion/exito', {
+                pagina: 'Cotización Actualizada',
+                usuario: req.usuario,
+                mensaje:
+                    '¡Tu cotización ha sido editada exitosamente!'
+            })
+        })
 
     } catch (err) {
-        console.error('Error en el servidor:', err);
-        // Aquí también usa el 'res' original
+        console.error(
+            'Error en el servidor:',
+            err
+        )
+
         return res.render('templates/mensaje', {
-            pagina: 'Hubo un problema al editar la cotización.'
-        });
+            pagina:
+                'Hubo un problema al editar la cotización.'
+        })
     }
 }
 const cancelarCotizacion = async (req, res) => {

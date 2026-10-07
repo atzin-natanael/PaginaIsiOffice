@@ -50,7 +50,7 @@ router.post('/eliminar-producto', verifyCsrfToken, eliminarArticuloSesion)
 //router.get('/exito', protegerRuta, verifyCsrfToken, extito);
 router.post('/cancelar/:id', protegerRuta, verifyCsrfToken, cancelarCotizacion)
 router.post('/guardar', protegerRuta, verifyCsrfToken, guardarCotizacionCompleta)
-router.post('/guardar-edit', protegerRuta, verifyCsrfToken, guardarCotizacionEditando)
+router.post('/editar/:id/guardar-edit', protegerRuta, verifyCsrfToken, guardarCotizacionEditando)
 
 // cotizacionesRoutes.js
 // Cambiamos protegerApi por verifyCsrfToken para que coincida con lo que envías

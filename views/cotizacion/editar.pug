@@ -77,7 +77,7 @@ block contenido
                                     
                                     // 5. Acción
                                     td.p-3.text-right.relative.group
-                                        form(action="/cotizacion/agregar" method="POST" class="flex items-center justify-end gap-2")
+                                        form(action=`/cotizacion/editar/${id}/agregar` method="POST" class="flex items-center justify-end gap-2")
                                             input(type="hidden" name="_csrf" value=csrfToken)
                                             input(type="hidden" name="articuloId" value=codigo.ART_ID)
                                             if(termino)
@@ -217,7 +217,7 @@ block contenido
                             div.flex.justify-between.items-center
                                 span.text-gray-600 Total:
                                 span.text-2xl.font-black.text-green-600 $#{totalCot}
-                            form(action="/cotizacion/guardar-edit" method="POST")
+                            form(action=`/cotizacion/editar/${id}/guardar-edit` method="POST")
                                 input(type="hidden" name="_csrf" value=csrfToken)
                                 button(type="submit" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md uppercase text-sm") Guardar Cotización
                     else
