@@ -184,6 +184,7 @@ const registrar = async(req, res)=>{
     if (!existeDescuento) {
         await DescuentosClientes.create({
             CLIENTE_ID: CLIENTE_ID_OBT,
+            CLAVE_CLIENTE: clave,
             DESCUENTO: 30.00
         })
     }

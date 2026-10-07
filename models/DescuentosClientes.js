@@ -8,6 +8,11 @@ const DescuentosClientes = db.define('DESCUENTOS_CLIENTES', {
         allowNull: false,
         autoIncrement: true
     },
+    CLAVE_CLIENTE: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
     CLIENTE_ID: {
         type: DataTypes.INTEGER,
         allowNull: false,
