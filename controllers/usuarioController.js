@@ -2,6 +2,7 @@ import { check, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import Usuario from '../models/Usuario.js'
+import DescuentosClientes from '../models/DescuentosClientes.js'
 import {generarId, generarJWT} from '../helpers/tokens.js'
 import {emailRegistro, emailOlvidePassword} from '../helpers/emails.js'
 import {regenerateCsrfToken} from '../middlewares/csrfMiddleware.js'
@@ -71,7 +72,12 @@ const formularioRegistro = (req, res)=>{
 const registrar = async(req, res)=>{
     //validacion
     await check('nombre').notEmpty().withMessage('El Nombre es obligatorio').run(req)
-    await check('clave').notEmpty().withMessage('La Clave es obligatoria').run(req)
+    await check('clave')
+        .notEmpty()
+        .withMessage('La Clave es obligatoria')
+        .isInt()
+        .withMessage('La Clave debe contener solo números')
+        .run(req)
     await check('email').isEmail().withMessage('Eso no parece un Email').run(req)
     await check('password').isLength({min: 6}).withMessage('La contraseña debe tener al menos 6 caracteres').run(req)
     await check('repetir_password').equals(req.body.password).withMessage('Las contraseñas no son iguales').run(req)
@@ -104,40 +110,83 @@ const registrar = async(req, res)=>{
             }
         })
     }
-    let CLIENTE_ID_OBT = "";
+    let CLIENTE_ID_OBT = null
     try{
         console.log('API URL:',     process.env.API_URL);
         console.log('Clave del cliente:', clave);
         const response = await fetch(`${process.env.API_URL}/cliente/${clave}`);
-        if (!response.ok) {
-            return res.render('auth/registro',{
-            pagina: 'Crear Cuenta',
-            errores: [{msg: 'Error en la clave del cliente, no se pudo verificar'}],
-            usuario: {
-                NOMBRE: req.body.nombre,
-                EMAIL: req.body.email,
-                CLIENTE_ID: req.body.clave
-            }
-        })
+        const data = await response.json()
+
+        if (!Array.isArray(data) || data.length === 0) {
+            return res.render('auth/registro', {
+                pagina: 'Crear Cuenta',
+                errores: [{
+                    msg: 'Cliente inválido'
+                }],
+                usuario: {
+                    NOMBRE: req.body.nombre,
+                    EMAIL: req.body.email,
+                    CLIENTE_ID: req.body.clave
+                }
+            })
         }
-        const data = await response.json();
-        console.log('Datos obtenidos de la API:', data);
-        CLIENTE_ID_OBT = data[0].CLIENTE_ID;   
+
+        CLIENTE_ID_OBT = data[0].CLIENTE_ID  
+        if (!CLIENTE_ID_OBT) {
+        return res.render('auth/registro', {
+            pagina: 'Crear Cuenta',
+            errores: [{
+                msg: 'Cliente inválido'
+            }],
+            usuario: {
+                NOMBRE: nombre,
+                EMAIL: email,
+                CLIENTE_ID: clave
+            }
+        });
+    }
         console.log('CLIENTE_ID obtenido:', CLIENTE_ID_OBT);
     }
-    catch(error){
-        console.log('Error al obtener datos del cliente desde la API');
-        console.log(error)
+    catch (error) {
+    console.error(
+        'Error al obtener datos del cliente desde la API:',
+        error
+    )
+
+    return res.render('auth/registro', {
+        pagina: 'Crear Cuenta',
+        errores: [{
+            msg: 'No se pudo verificar la clave del cliente'
+        }],
+        usuario: {
+            NOMBRE: nombre,
+            EMAIL: email,
+            CLIENTE_ID: clave
+        }
+    })
     }
     console.log('CLIENTE_ID final:', CLIENTE_ID_OBT);
     //Almacenar usuario
     const usuario = await Usuario.create({
         NOMBRE: nombre,
         EMAIL: email,
+        CLAVE_CLIENTE: clave,
         password,
         CLIENTE_ID: CLIENTE_ID_OBT, 
         token: generarId()
     })
+    const existeDescuento = await DescuentosClientes.findOne({
+        where: {
+            CLIENTE_ID: CLIENTE_ID_OBT
+        }
+    })
+
+    if (!existeDescuento) {
+        await DescuentosClientes.create({
+            CLIENTE_ID: CLIENTE_ID_OBT,
+            DESCUENTO: 30.00
+        })
+    }
     //Envia email de confirmacion
     emailRegistro({
         nombre: usuario.NOMBRE,

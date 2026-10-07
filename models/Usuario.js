@@ -11,6 +11,10 @@ const Usuario = db.define('USUARIOS',{
         type: DataTypes.STRING,
         allowNull: false
     },
+    CLAVE_CLIENTE: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     CLIENTE_ID: {
         type: DataTypes.INTEGER,
         allowNull: false
