@@ -1,4 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('requiereFactura');
+    const divFactura = document.getElementById('datosFactura');
+    const btnNext = document.getElementById('btnNext');
+    checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+            divFactura.classList.remove('hidden'); // Muestra el div
+            btnNext.classList.add('hidden');    // Muestra el botón
+        } else {
+            divFactura.classList.add('hidden');    // Oculta el div
+            btnNext.classList.remove('hidden');       // Oculta el botón
+        }
+    });
+
     const metodoPago = document.querySelector('#metodoPago');
     const formaPago = document.querySelector('#formaPago');
     const usoCFDI = document.querySelector('#usoCFDI');
@@ -10,13 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 formaPago.value = '99';
                 formaPago.disabled = true;
             }
-            if(usoCFDI) {
-                usoCFDI.value = 'CP01';
-                usoCFDI.disabled = true;
-            }
             crearHidden('formaPago', '99');
-            crearHidden('usoCFDI', 'CP01');
+            //crearHidden('usoCFDI', 'CP01');
         } else {
+            const opcion99 = document.querySelector('select[name="formaPago"] option[value="99"]');
+            if (opcion99) {
+                opcion99.hidden = true; // O puedes usar: opcion99.style.display = 'none'; (dependiendo del navegador)
+            }
             // DESBLOQUEAR Y LIMPIAR
             if(formaPago) {
                 formaPago.disabled = false;
