@@ -207,6 +207,7 @@ const confirmar = async (req, res)=>{
     const usuario = await Usuario.findOne({where: {token}})
     if(!usuario){
         return res.render('auth/confirmar-cuenta',{
+            barra: true,
             pagina: 'Error al confirmar tu cuenta',
             mensaje: 'Hubo un error al confirmar tu cuenta, intenta de nuevo',
             error: true
@@ -218,6 +219,7 @@ const confirmar = async (req, res)=>{
     await usuario.save()
 
     res.render('auth/confirmar-cuenta',{
+            barra: true,
             pagina: 'Cuenta Confirmada',
             mensaje: 'La Cuenta Se Confirmo Correctamente'
         })
